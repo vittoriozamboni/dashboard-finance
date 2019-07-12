@@ -3,12 +3,13 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Link, withRouter } from "react-router-dom";
 
 import { FullSectionLoader } from 'components/ui/Loader';
+import { PageHeader } from 'components/ui/PageHeader';
 
 import './categories/categories.scss';
 
 import { FINANCE_BASE_URL } from './constants';
 import { withFinance } from './storeConnection';
-import { PageHeader } from 'components/ui/PageHeader';
+import { MainGraph } from './components/MainGraph';
 
 export { FINANCE_BASE_URL };
 
@@ -29,7 +30,9 @@ function FinanceHome() {
     return <Fragment>
         <PageHeader>Finance</PageHeader>        
         <div className="ui-page-body">
-            <p>This is the landing page of Finance module.</p>
+            <div>
+                <MainGraph />
+            </div>
             <div>
                 Click here to view all <Link to={'/apps/finance/categories'}>Categories</Link>
             </div>

@@ -1,0 +1,14 @@
+@import '~@vzamboni/dashboard-ui-style/vars/colors';
+
+.finance__main-graph__title-container {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.finance__main-graph__select {
+    border: none;
+    border-bottom: 1px solid $grey-light;
+    background-color: $grey-light-l2;
+    margin: 0 8px;
+}

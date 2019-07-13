@@ -11,10 +11,11 @@ import { FullSectionLoader } from 'components/ui/Loader';
 import { withFinance } from '../../storeConnection';
 
 
-function MainGraph({ finance }) {
-    const [showLastMonths, setShowLastMonths] = useState(5);
-
+function MainGraph({ finance }) {    
+    const monthsOfCurrentYear = new Date().getMonth() + 1;
     const monthChartContainerId = 'finance-home-month-chart-container';
+
+    const [showLastMonths, setShowLastMonths] = useState(monthsOfCurrentYear);
 
     useEffect(() => {        
         const chart = createChart(
@@ -25,6 +26,20 @@ function MainGraph({ finance }) {
     }, [showLastMonths]);
 
     return <div>
+        <div className="finance__main-graph__title-container">
+            Show
+            <select className="finance__main-graph__select"
+                value={showLastMonths}
+                onChange={e => setShowLastMonths(+(e.target.value || 0))}
+            >
+                <option value="">All</option>
+                <option value={monthsOfCurrentYear}>Current year</option>
+                <option value={3}>Last 3 months</option>
+                <option value={6}>Last 6 months</option>
+                <option value={monthsOfCurrentYear + 12}>Last 2 years</option>
+                <option value={monthsOfCurrentYear + 24}>Last 3 years</option>
+            </select>
+        </div>
         <div id={monthChartContainerId} style={{ width: "100%", height: "400px" }}><FullSectionLoader /></div>
     </div>;
 }
@@ -51,7 +66,12 @@ function createChart(chart, { finance, showLastMonths }) {
     // Get the top 3 and compress other values into "Others"
     chart.data = [];
     const allCategories = {};
-    Object.keys(monthsData).sort().slice(-1 * showLastMonths).forEach(month => {
+
+    let months = Object.keys(monthsData).sort();
+    if (showLastMonths)
+        months = months.slice(-1 * showLastMonths);
+
+    months.forEach(month => {
         const data = monthsData[month];
         let categories = Object.keys(data).map(category => ({
             category: parseInt(category), amount: data[category]
@@ -116,6 +136,7 @@ function createChart(chart, { finance, showLastMonths }) {
     lineSeries.dataFields.categoryX = "month";
     lineSeries.name = "Incoming";
     lineSeries.strokeWidth = 3;
+    lineSeries.stroke = am4core.color(incoming.attributes_ui.color);
     lineSeries.tooltipText = "Incoming in {categoryX}: {valueY.value}";
 
     //add bullets
@@ -127,6 +148,11 @@ function createChart(chart, { finance, showLastMonths }) {
     chart.cursor = new am4charts.XYCursor();
     chart.cursor.behavior = "zoomX";
 
+    chart.fontSize = 12;
+
     // Add legend
     chart.legend = new am4charts.Legend();
+    let markerTemplate = chart.legend.markers.template;
+    markerTemplate.width = 15;
+    markerTemplate.height = 15;
 }

@@ -1,7 +1,7 @@
 import { listToObject } from 'utils/data';
 
 import * as actions from './actions';
-import { createCategoriesTree, createSubCategoriesTree } from './categories/categoriesDataUtils';
+import { createCategoriesTree, createSubCategoriesTree } from './data/categoriesDataUtils';
 
 const INITIAL_STATE = {
     initialized: false,

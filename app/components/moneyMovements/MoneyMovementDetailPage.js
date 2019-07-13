@@ -2,10 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withRouter, Link } from 'react-router-dom';
 
-import { withFinance } from '../storeConnection';
 import { PageHeader } from 'components/ui/PageHeader';
-import { FINANCE_BASE_URL } from '../constants';
+
+import { FINANCE_BASE_URL } from '../../constants';
+import { withFinance } from '../../storeConnection';
 import { MoneyMovementDetail } from './MoneyMovementDetail';
+
 
 function MoneyMovementDetailPage({ match, finance }) {
     const moneyMovementId = +match.params.id;

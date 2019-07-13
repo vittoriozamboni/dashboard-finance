@@ -4,9 +4,10 @@ import { Link } from 'react-router-dom';
 
 import { PageHeader } from 'components/ui/PageHeader';
 
-import { withFinance } from '../storeConnection';
-import { FINANCE_BASE_URL } from '../constants';
+import { FINANCE_BASE_URL } from '../../constants';
+import { withFinance } from '../../storeConnection';
 import { ContextsTimeline } from './ContextsTimeline';
+
 
 function Contexts({ finance }) {
     const controls = <Controls />;

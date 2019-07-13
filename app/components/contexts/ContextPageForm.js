@@ -3,13 +3,15 @@ import PropTypes from 'prop-types';
 import { withRouter, Link } from 'react-router-dom';
 import { Formik } from 'formik';
 
+import { getCurrentUser } from 'libs/authentication/utils';
 import { PageHeader } from 'components/ui/PageHeader';
 import { CodeHighlight } from 'components/style/CodeHighlight';
-import { FINANCE_BASE_URL } from '../constants';
-import { withFinance } from '../storeConnection';
-import { ContextEntity, newContext } from '../models/context';
-import { getCurrentUser } from 'libs/authentication/utils';
+
+import { FINANCE_BASE_URL } from '../../constants';
+import { withFinance } from '../../storeConnection';
+import { ContextEntity, newContext } from '../../models/context';
 import { ContextForm } from './ContextForm';
+
 
 function ContextPageForm({ match, history, finance }) {
     const { contexts } = finance;    

@@ -4,7 +4,8 @@ import Select from 'react-select';
 import CreatableSelect from 'react-select/lib/Creatable';
 
 import { getFormReactSelectStyles } from 'components/style/formReactSelect';
-import { withFinance } from '../storeConnection';
+
+import { withFinance } from '../../storeConnection';
 import { UserAssignment } from './forms/UserAssignment';
 
 

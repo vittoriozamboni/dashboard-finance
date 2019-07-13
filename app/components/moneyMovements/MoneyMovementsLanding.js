@@ -1,11 +1,12 @@
 import React from 'react';
 import { Switch, Route, withRouter } from 'react-router-dom';
 
+import { FINANCE_BASE_URL } from '../../constants';
 import { MoneyMovements } from './MoneyMovements';
-import { FINANCE_BASE_URL } from '../constants';
 import { MoneyMovementDetailPage } from './MoneyMovementDetailPage';
 import { MoneyMovementFormPage } from './MoneyMovementFormPage';
 import { MoneyMovementAddBatchFormPage } from './MoneyMovementAddBatchFormPage';
+
 
 function MoneyMovementsLanding() {
     return <Switch>

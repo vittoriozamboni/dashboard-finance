@@ -1,9 +1,10 @@
 import React from 'react';
 import { Switch, Route, withRouter } from 'react-router-dom';
 
+import { FINANCE_BASE_URL } from '../../constants';
+
 import { Categories } from './Categories';
 import { CategoryPageForm } from './CategoryPageForm';
-import { FINANCE_BASE_URL } from '../constants';
 import { CategoryDetail } from './CategoryDetail';
 
 function CategoriesLanding() {

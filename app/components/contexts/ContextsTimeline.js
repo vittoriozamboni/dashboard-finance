@@ -2,10 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import { dateToUI } from 'utils/dates';
-import { Timeline } from 'components/ui/Timeline';
 import { CodeHighlight } from 'components/style/CodeHighlight';
-import { FINANCE_BASE_URL } from '../constants';
+import { Timeline } from 'components/ui/Timeline';
+import { dateToUI } from 'utils/dates';
+
+import { FINANCE_BASE_URL } from '../../constants';
+
 
 export function ContextsTimeline({ contexts, moneyMovements }) {
     const contextsList = Object.values(contexts)

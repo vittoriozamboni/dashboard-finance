@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import * as am4core from "@amcharts/amcharts4/core";
@@ -6,25 +6,26 @@ import * as am4charts from "@amcharts/amcharts4/charts";
 import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 am4core.useTheme(am4themes_animated);
 
-import { withFinance } from '../storeConnection';
+import { FullSectionLoader } from 'components/ui/Loader';
+
+import { withFinance } from '../../storeConnection';
+
 
 function MainGraph({ finance }) {
+    const [showLastMonths, setShowLastMonths] = useState(5);
 
-    const currentYear = new Date().getFullYear();
-    const lastYearMM = Object.values(finance.moneyMovements);
-        // .filter(mm => mm.movement_date.indexOf(`${currentYear}-`) === 0);
     const monthChartContainerId = 'finance-home-month-chart-container';
 
-    useEffect(() => {
+    useEffect(() => {        
         const chart = createChart(
             am4core.create(monthChartContainerId, am4charts.XYChart),
-            { lastYearMM, finance }
+            { finance, showLastMonths }
         );        
         return () => { chart && chart.dispose(); };
-    }, []);
+    }, [showLastMonths]);
 
     return <div>
-        <div id={monthChartContainerId} style={{ width: "100%", height: "300px" }}></div>
+        <div id={monthChartContainerId} style={{ width: "100%", height: "400px" }}><FullSectionLoader /></div>
     </div>;
 }
 
@@ -35,9 +36,9 @@ MainGraph.propTypes = {
     finance: PropTypes.object.isRequired,
 };
 
-function createChart(chart, { lastYearMM, finance }) {
+function createChart(chart, { finance, showLastMonths }) {
     // Divide by months
-    const monthsData = lastYearMM.reduce((months, mm) => {
+    const monthsData = Object.values(finance.moneyMovements).reduce((months, mm) => {
         const month = `${mm.movement_date.split('-')[0]}-${mm.movement_date.split('-')[1]}`;
         if (!months[month]) months[month] = {};
         // Group by first level - if parent is set, use it
@@ -50,7 +51,7 @@ function createChart(chart, { lastYearMM, finance }) {
     // Get the top 3 and compress other values into "Others"
     chart.data = [];
     const allCategories = {};
-    Object.keys(monthsData).sort().forEach(month => {
+    Object.keys(monthsData).sort().slice(-1 * showLastMonths).forEach(month => {
         const data = monthsData[month];
         let categories = Object.keys(data).map(category => ({
             category: parseInt(category), amount: data[category]
@@ -84,27 +85,47 @@ function createChart(chart, { lastYearMM, finance }) {
     valueAxis.title.text = "Amount (Euro)";
     
     // Create series
-    function createSeries(field, name, stacked) {
+    function createSeries(field, name) {
         let series = chart.series.push(new am4charts.ColumnSeries());
         series.dataFields.valueY = field;
         series.dataFields.categoryX = 'month';
         series.name = name;
         series.columns.template.tooltipText = "{name}: [bold]{valueY}[/]";
-        series.stacked = stacked;
+        series.stacked = true;
         series.columns.template.width = am4core.percent(95);
     }
     
+    const incoming = Object.values(finance.categories).filter(c => c.name === 'Incoming')[0];
+    
     chart.colors.list = [];
+
     Object.keys(allCategories).forEach(categoryId => {
         if (categoryId === 'others') {
             chart.colors.list.push(am4core.color('#A9A9A9'));
-            createSeries(categoryId, 'Others', true);        
-        } else {
+            createSeries(categoryId, 'Others');        
+        } else if (+categoryId !== incoming.id) {
             const category = finance.categories[categoryId];
             chart.colors.list.push(am4core.color(category.attributes_ui.color || '#ccddff'));
-            createSeries(categoryId, category.name, true);
+            createSeries(categoryId, category.name);
         }
     });
+
+    //create line
+    let lineSeries = chart.series.push(new am4charts.LineSeries());
+    lineSeries.dataFields.valueY = incoming.id;
+    lineSeries.dataFields.categoryX = "month";
+    lineSeries.name = "Incoming";
+    lineSeries.strokeWidth = 3;
+    lineSeries.tooltipText = "Incoming in {categoryX}: {valueY.value}";
+
+    //add bullets
+    let circleBullet = lineSeries.bullets.push(new am4charts.CircleBullet());
+    circleBullet.circle.fill = am4core.color("#fff");
+    circleBullet.circle.strokeWidth = 2;
+
+    //add chart cursor
+    chart.cursor = new am4charts.XYCursor();
+    chart.cursor.behavior = "zoomX";
 
     // Add legend
     chart.legend = new am4charts.Legend();

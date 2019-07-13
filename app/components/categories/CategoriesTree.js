@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import { FINANCE_BASE_URL } from '../constants';
+import { FINANCE_BASE_URL } from '../../constants';
 
 export function CategoriesTree({ categoriesTree }) {
     if (categoriesTree.length === 0) return '';

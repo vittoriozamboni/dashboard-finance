@@ -5,27 +5,13 @@ import { Link, withRouter } from "react-router-dom";
 import { FullSectionLoader } from 'components/ui/Loader';
 import { PageHeader } from 'components/ui/PageHeader';
 
-import './categories/categories.scss';
+import '../categories/categories.scss';
 
-import { FINANCE_BASE_URL } from './constants';
-import { withFinance } from './storeConnection';
-import { MainGraph } from './components/MainGraph';
+import { withFinance } from '../../storeConnection';
+import { MainGraph } from './MainGraph';
 
-export { FINANCE_BASE_URL };
 
 function FinanceHome() {
-
-    const [homeState, setHomeState] = useState({
-        loading: true,
-    });
-
-    useEffect(() => {
-        setHomeState({ ...homeState, loading: false });
-    }, []); // eslint-disable-line
-
-    const { loading } = homeState;
-
-    if (loading) return <FullSectionLoader />;
 
     return <Fragment>
         <PageHeader>Finance</PageHeader>        

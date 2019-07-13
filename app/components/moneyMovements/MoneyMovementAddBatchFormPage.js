@@ -3,15 +3,17 @@ import PropTypes from 'prop-types';
 import { withRouter, Link } from 'react-router-dom';
 import { Formik } from 'formik';
 
-import { PageHeader } from 'components/ui/PageHeader';
-import { CodeHighlight } from 'components/style/CodeHighlight';
-import { FINANCE_BASE_URL } from '../constants';
-import { moneyMovementsEntity, newMoneyMovement } from '../models/moneyMovement';
 import { getCurrentUser } from 'libs/authentication/utils';
-import { MoneyMovementAddBatchForm } from './MoneyMovementAddBatchForm';
-import { postRequest } from 'libs/requests/requests';
 import { notify } from 'libs/notifications/notifications';
-import { categoriesEntity } from '../models/category';
+import { postRequest } from 'libs/requests/requests';
+import { CodeHighlight } from 'components/style/CodeHighlight';
+import { PageHeader } from 'components/ui/PageHeader';
+
+import { FINANCE_BASE_URL } from '../../constants';
+import { categoriesEntity } from '../../models/category';
+import { moneyMovementsEntity, newMoneyMovement } from '../../models/moneyMovement';
+import { MoneyMovementAddBatchForm } from './MoneyMovementAddBatchForm';
+
 
 function MoneyMovementAddBatchFormPage({ match, history }) {
     const loggedUser = getCurrentUser();

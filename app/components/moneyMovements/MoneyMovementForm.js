@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { withFinance } from '../storeConnection';
+
+import { withFinance } from '../../storeConnection';
 
 
 function MoneyMovementForm({ values, setFieldValue, handleBlur, finance }) {

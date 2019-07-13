@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
+
 export function UserAssignment({ users, usersRef, values, addNewUserRel, removeUserRel, setUserPercentage, disabled }) {
     const [state, setState] = useState({
         newUserRel: {}

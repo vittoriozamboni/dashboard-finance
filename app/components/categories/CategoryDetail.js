@@ -5,9 +5,10 @@ import { withRouter, Link } from 'react-router-dom';
 import { FullSectionLoader } from 'components/ui/Loader';
 import { PageHeader } from 'components/ui/PageHeader';
 
-import { withFinance } from '../storeConnection';
-import { MoneyMovementEntity } from '../models/moneyMovement';
-import { FINANCE_BASE_URL } from '../FinanceLanding';
+import { FINANCE_BASE_URL } from '../../constants';
+import { withFinance } from '../../storeConnection';
+import { MoneyMovementEntity } from '../../models/moneyMovement';
+
 import { CategoryLineChart, CategoryMonthlyChart } from './CategoryCharts';
 import { MoneyMovementsGrid } from '../moneyMovements/MoneyMovementsGrid';
 

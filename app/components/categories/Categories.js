@@ -3,8 +3,9 @@ import PropTypes from 'prop-types';
 import { withRouter, Link } from 'react-router-dom';
 
 import { PageHeader } from 'components/ui/PageHeader';
-import { FINANCE_BASE_URL } from '../constants';
-import { withFinance } from '../storeConnection';
+
+import { FINANCE_BASE_URL } from '../../constants';
+import { withFinance } from '../../storeConnection';
 import { CategoriesTiles } from './CategoriesTiles';
 
 function Categories({ finance }) {

@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom';
 
 import { CodeHighlight } from 'components/style/CodeHighlight';
 
-import { withFinance } from '../storeConnection';
-import { FINANCE_BASE_URL } from '../constants';
+import { FINANCE_BASE_URL } from '../../constants';
+import { withFinance } from '../../storeConnection';
+
 
 function MoneyMovementDetail({ moneyMovement, finance }) {
     const category = finance.categories[moneyMovement.category];

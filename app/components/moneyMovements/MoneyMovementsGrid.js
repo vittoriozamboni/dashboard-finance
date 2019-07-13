@@ -4,9 +4,11 @@ import { Link } from 'react-router-dom';
 
 import { Grid } from 'components/grid/Grid';
 import { ModalTrigger } from 'components/ui/Modal';
+
+import { FINANCE_BASE_URL } from '../../constants';
+import { withFinance } from '../../storeConnection';
 import { MoneyMovementDetail } from './MoneyMovementDetail';
-import { withFinance } from '../storeConnection';
-import { FINANCE_BASE_URL } from '../constants';
+
 
 function MoneyMovementsGrid({ moneyMovements, finance }) {
     const mmColumns = ['actions', 'movement_icon', 'amount', 'movement_date', 'category', 'description', 'tags', 'id'];

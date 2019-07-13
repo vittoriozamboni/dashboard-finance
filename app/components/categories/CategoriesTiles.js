@@ -2,8 +2,9 @@ import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import { FINANCE_BASE_URL } from '../constants';
 import { Card } from 'components/ui/Cards';
+
+import { FINANCE_BASE_URL } from '../../constants';
 
 export function CategoriesTiles({ categoriesTree }) {
     if (categoriesTree.length === 0) return '';

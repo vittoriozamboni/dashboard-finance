@@ -1,8 +1,9 @@
 import React from 'react';
 import { Switch, Route, withRouter } from 'react-router-dom';
 
+import { FINANCE_BASE_URL } from '../../constants';
+
 import { Contexts } from './Contexts';
-import { FINANCE_BASE_URL } from '../constants';
 import { ContextPageForm } from './ContextPageForm';
 import { ContextDetail } from './ContextDetail';
 

@@ -10,10 +10,10 @@ import './contexts/contexts.scss';
 import { FINANCE_BASE_URL } from './constants';
 import { withFinance } from './storeConnection';
 import { preload } from './preload';
-import { FinanceHome } from './FinanceHome';
-import { CategoriesLanding } from './categories/CategoriesLanding';
-import { ContextsLanding } from './contexts/ContextsLanding';
-import { MoneyMovementsLanding } from './moneyMovements/MoneyMovementsLanding';
+import { FinanceHome } from './components/home/FinanceHome';
+import { CategoriesLanding } from './components/categories/CategoriesLanding';
+import { ContextsLanding } from './components/contexts/ContextsLanding';
+import { MoneyMovementsLanding } from './components/moneyMovements/MoneyMovementsLanding';
 
 export { FINANCE_BASE_URL };
 
@@ -31,7 +31,9 @@ class FinanceLanding extends Component {
         }
     }
 
-    initialize = () => { preload().then(() => this.setInitialized()); }
+    initialize = () => {
+        preload().then(() => this.setInitialized());
+    }
 
     setInitialized = () => { this.setState({ appInitialized: true }); }
 

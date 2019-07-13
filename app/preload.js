@@ -7,6 +7,7 @@ import { tagsEntity } from './models/tag';
 import { usersEntity } from './models/user';
 import { INITIALIZE } from './actions';
 
+
 export function preload() {
     return new Promise(resolve => {
         store.dispatch({ type: SET_APPLICATION_LOADING, loading: true });

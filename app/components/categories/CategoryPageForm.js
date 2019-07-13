@@ -3,12 +3,13 @@ import PropTypes from 'prop-types';
 import { withRouter, Link } from 'react-router-dom';
 import { Formik } from 'formik';
 
+import { getCurrentUser } from 'libs/authentication/utils';
 import { PageHeader } from 'components/ui/PageHeader';
 import { CodeHighlight } from 'components/style/CodeHighlight';
-import { FINANCE_BASE_URL } from '../constants';
-import { withFinance } from '../storeConnection';
-import { CategoryEntity, newCategory } from '../models/category';
-import { getCurrentUser } from 'libs/authentication/utils';
+
+import { FINANCE_BASE_URL } from '../../constants';
+import { withFinance } from '../../storeConnection';
+import { CategoryEntity, newCategory } from '../../models/category';
 import { CategoryForm } from './CategoryForm';
 
 function CategoryPageForm({ match, history, finance }) {

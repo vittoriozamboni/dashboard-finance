@@ -5,11 +5,12 @@ import { withRouter, Link } from 'react-router-dom';
 import { FullSectionLoader } from 'components/ui/Loader';
 import { PageHeader } from 'components/ui/PageHeader';
 
-import { withFinance } from '../storeConnection';
-import { moneyMovementsEntity } from '../models/moneyMovement';
-import { FINANCE_BASE_URL } from '../FinanceLanding';
-import { ContextCategoriesChart } from './ContextCharts';
+import { FINANCE_BASE_URL } from '../../constants';
+import { withFinance } from '../../storeConnection';
+import { moneyMovementsEntity } from '../../models/moneyMovement';
+
 import { MoneyMovementsGrid } from '../moneyMovements/MoneyMovementsGrid';
+import { ContextCategoriesChart } from './ContextCharts';
 
 
 function ContextDetail({ match, finance }) {

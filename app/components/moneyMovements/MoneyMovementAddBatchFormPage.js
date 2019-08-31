@@ -18,8 +18,14 @@ import { MoneyMovementAddBatchForm } from './MoneyMovementAddBatchForm';
 function MoneyMovementAddBatchFormPage({ match, history }) {
     const loggedUser = getCurrentUser();
 
+    const initialValues = [newMoneyMovement(), newMoneyMovement(), newMoneyMovement()]
+        .map(mm => {
+            mm.user = loggedUser.id;
+            mm.amount = mm.amount + '';
+            return mm;
+        });
     const initialState = {
-        values: [newMoneyMovement(), newMoneyMovement(), newMoneyMovement()],
+        values: initialValues
     };
 
     const [formState, setFormState] = useState(initialState);
@@ -32,7 +38,7 @@ function MoneyMovementAddBatchFormPage({ match, history }) {
                 if (values.movement_date) {
                     promises.push(moneyMovementsEntity.save(values));
                 }
-            });            
+            });
             if (promises.lenght === 0) {
                 setSubmitting(false);
                 return;
@@ -43,12 +49,13 @@ function MoneyMovementAddBatchFormPage({ match, history }) {
                 setFormState({ ...formState, values });
                 setSubmitting(false);
                 postRequest(`finance/api/category/calculate-totals/`, {}).then(resp => {
-                    categoriesEntity.fetch().then(() => {                        
+                    categoriesEntity.fetch().then(() => {
                         if (values.length === 0) {
                             notify.success('All money movements added successfully.');
-                            history.push(`${FINANCE_BASE_URL}/money-movements`);                            
+                            history.push(`${FINANCE_BASE_URL}/money-movements`);
                         } else if (totalMM > values.length) {
-                            notify.success(`${totalMM - values.length} money movements added successfully.`);
+                            const addedMM = totalMM - values.length;
+                            notify.success(`${addedMM} Money Movement${addedMM > 1 ? 's' : ''} added successfully.`);
                         }
                     });
                 });
@@ -63,14 +70,14 @@ function MoneyMovementAddBatchFormPage({ match, history }) {
             const { isSubmitting, handleSubmit } = props;
             const { values } = formState;
 
-            const deleteMoneyMovement = (batchIndex) => {                
+            const deleteMoneyMovement = (batchIndex) => {
                 setFormState({
                     ...formState,
                     values: [...formState.values.map((v, index) => index !== batchIndex ? v : null)].filter(v => v)
                 });
             };
 
-            const cloneMoneyMovement = (batchIndex) => {                
+            const cloneMoneyMovement = (batchIndex) => {
                 const values = [];
                 formState.values.forEach((v, index) => {
                     values.push(v);
@@ -96,9 +103,9 @@ function MoneyMovementAddBatchFormPage({ match, history }) {
             };
 
             const controls = <Controls
-                isSubmitting={isSubmitting}                
+                isSubmitting={isSubmitting}
             />;
-            return <form onSubmit={handleSubmit}>  
+            return <form onSubmit={handleSubmit}>
                 <PageHeader controls={controls}>
                     <Link to={`${FINANCE_BASE_URL}`}
                         className={`ui-page-header ui-page-header__breadcrumb`}
@@ -140,7 +147,7 @@ function Controls({ isSubmitting }) {
         >Cancel</Link>
         <button
             disabled={isSubmitting ? true : false}
-            type="submit"            
+            type="submit"
             className={`${baseClass} ui-button--positive`}
         >Save</button>
     </Fragment>;

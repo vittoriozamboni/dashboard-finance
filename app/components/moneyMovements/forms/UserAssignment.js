@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 
-export function UserAssignment({ users, usersRef, values, addNewUserRel, removeUserRel, setUserPercentage, disabled }) {
+export function UserAssignment({ users, usersRef, values, addNewUserRel, removeUserRel, setUserAmount, disabled, mainAmount, namePrefix='' }) {
     const [state, setState] = useState({
         newUserRel: {}
     });
@@ -11,7 +11,7 @@ export function UserAssignment({ users, usersRef, values, addNewUserRel, removeU
         <thead>
             <tr>
                 <th className="p-b-5">User</th>
-                <th className="p-b-5">Percentage</th>
+                <th className="p-b-5">Amount</th>
                 <th width="30"></th>
             </tr>
         </thead>
@@ -19,6 +19,7 @@ export function UserAssignment({ users, usersRef, values, addNewUserRel, removeU
             <tr>
                 <td>
                     <select value={state.newUserRel.user || ''}
+                        name={`${namePrefix}new-user-rel-user`}
                         className="ui-form-v__select"
                         disabled={disabled}
                         onChange={e => setState({ ...state, newUserRel: { ...state.newUserRel, user: e.target.value ? +e.target.value : null }})}
@@ -30,36 +31,53 @@ export function UserAssignment({ users, usersRef, values, addNewUserRel, removeU
                     </select>
                 </td>
                 <td>
-                    <input value={state.newUserRel.percentage || ''}                
-                        className="ui-form-v__input" 
-                        disabled={disabled}   
-                        onChange={e => setState({ ...state, newUserRel: { ...state.newUserRel, percentage: e.target.value ? parseFloat(e.target.value) : null }})}
+                    <input value={state.newUserRel.amount || ''}
+                        name={`${namePrefix}new-user-rel-amount`}
+                        className="ui-form-v__input"
+                        disabled={disabled}
+                        onChange={e => setState({ ...state, newUserRel: { ...state.newUserRel, amount: e.target.value ? e.target.value : null }})}
                     />
                 </td>
                 <td>
-                    {!disabled && <i className="fas fa-plus icon-control" onClick={() => {
-                        addNewUserRel(state.newUserRel);
-                        setState({ ...state, newUserRel: {} });
-                     }} />}
+                    {!disabled && state.newUserRel.user && state.newUserRel.amount && parseFloat(state.newUserRel.amount) &&
+                        <i className="fas fa-plus icon-control"
+                            data-control={`${namePrefix}new-user-rel-add`}
+                            onClick={() => {
+                                addNewUserRel(state.newUserRel);
+                                setState({ ...state, newUserRel: {} });
+                            }}
+                        />
+                    }
                 </td>
             </tr>
-            {values.users_relation.map((ur, index) => {
+            {values.other_users.map((ur, index) => {
                 return <tr key={`user-relation-${index}`}>
                     <td>
                         {usersRef[ur.user].full_name}
                     </td>
                     <td>
-                        <input value={ur.percentage || ''}  
-                            className="ui-form-v__input" 
-                            disabled={disabled}                 
-                            onChange={e => setUserPercentage(e.target.value ? parseFloat(e.target.value) : null, index)}
+                        <input value={ur.amount || ''}
+                            name={`${namePrefix}new-user-rel-user-${index}-amount`}
+                            className="ui-form-v__input"
+                            style={{ textAlign: 'right' }}
+                            disabled={disabled}
+                            onChange={e => setUserAmount(e.target.value ? e.target.value : null, index)}
                         />
                     </td>
                     <td>
                         {!disabled && <i className="fas fa-minus icon-control" onClick={() => removeUserRel(index)} />}
-                    </td>                                
+                    </td>
                 </tr>;
             })}
+            <tr>
+                <td>Master Total</td>
+                <td>
+                    <div style={{ textAlign: 'right', paddingRight: '8px', paddingTop: '5px', marginTop: '5px', borderTop: '1px solid #9aa5b1' }}>
+                        {values.other_users.reduce((tot, u) => { return tot + parseFloat(u.amount || 0); }, parseFloat(mainAmount || 0))}
+                    </div>
+                </td>
+                <td></td>
+            </tr>
         </tbody>
     </table>;
 }
@@ -70,8 +88,10 @@ UserAssignment.propTypes = {
     values: PropTypes.object,
     addNewUserRel: PropTypes.func,
     removeUserRel: PropTypes.func,
-    setUserPercentage: PropTypes.func,
+    setUserAmount: PropTypes.func,
     disabled: PropTypes.bool,
+    mainAmount: PropTypes.string,
+    namePrefix: PropTypes.string,
 };
 
 UserAssignment.defaultProps = {

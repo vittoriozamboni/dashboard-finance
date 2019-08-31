@@ -20,19 +20,19 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
     const users = Object.values(finance.users).sort((u1, u2) => u1.full_name > u2.full_name ? 1 : -1);
 
     const addNewUserRel = (batchIndex, newUserRel) => {
-        if (newUserRel.user && newUserRel.percentage) {
-            setFieldValue('users_relation', batchIndex, [...values[batchIndex].users_relation, { ...newUserRel }]);
+        if (newUserRel.user && newUserRel.amount) {
+            setFieldValue('other_users', batchIndex, [...values[batchIndex].other_users, { ...newUserRel }]);
         }
     };
 
-    const setUserPercentage = (batchIndex, percentage, index) => {
-        setFieldValue('users_relation', batchIndex, values[batchIndex].users_relation.map((ur, urIndex) => {
-            return urIndex === index ? { ...ur, percentage } : ur;
+    const setUserAmount = (batchIndex, amount, index) => {
+        setFieldValue('other_users', batchIndex, values[batchIndex].other_users.map((ur, urIndex) => {
+            return urIndex === index ? { ...ur, amount } : ur;
         }));
     };
 
     const removeUserRel = (batchIndex, index) => {
-        setFieldValue('users_relation', batchIndex, values[batchIndex].users_relation.filter((ur, urIndex) => index !== urIndex));
+        setFieldValue('other_users', batchIndex, values[batchIndex].other_users.filter((ur, urIndex) => index !== urIndex));
     };
 
     const onMultiSelectChange = (options, action, batchIndex, fieldName) => {
@@ -53,15 +53,16 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
     const { viewAdvancedOptions } = formState;
 
     return <div style={{ width: '100%' }}>
-        {values.map((mmValues, batchIndex) => {  
-            const disableEntry = isSubmitting;      
-            return <Fragment key={batchIndex}> 
+        {values.map((mmValues, batchIndex) => {
+            const disableEntry = isSubmitting;
+            return <Fragment key={batchIndex}>
             <div className="row ui-form p-t-10">
                 <div className="col-xs-12 col-sm-6" style={{ maxWidth: '315px' }}>{/* Basic */}
                     <div className="ui-form-v__field-group">
                         <div className="ui-form-v__field" style={{ maxWidth: '50px' }}>{/* Movement */}
                             <div className="ui-form-v__field-input">
                                 <select id="money-movement-movement" value={mmValues.movement || ''}
+                                    name={`mm-${batchIndex}-movement`}
                                     className="ui-form-v__select"
                                     disabled={disableEntry}
                                     onChange={e => setFieldValue('movement', batchIndex, e.target.value)}
@@ -73,21 +74,30 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                         </div>
                         <div className="ui-form-v__field" style={{ maxWidth: '120px' }}>{/* Amount */}
                             <div className="ui-form-v__field-input">
-                                <input value={mmValues.amount}   
-                                    className="ui-form-v__input"             
-                                    disabled={disableEntry}  
-                                    placeholder="Amount" 
+                                <input value={mmValues.amount}
+                                    name={`mm-${batchIndex}-amount`}
+                                    className="ui-form-v__input"
+                                    style={{ textAlign: 'right' }}
+                                    disabled={disableEntry}
+                                    placeholder="Amount"
                                     onChange={e => setFieldValue('amount', batchIndex, e.target.value)}
-                                    onBlur={handleBlur}
+                                    onFocus={e => {
+                                        if (e.target.value === '0') setFieldValue('amount', batchIndex, '');
+                                    }}
+                                    onBlur={e => {
+                                        if (e.target.value === '') setFieldValue('amount', batchIndex, '0');
+                                        handleBlur(e);
+                                    }}
                                 />
                             </div>
                         </div>
                         <div className="ui-form-v__field" style={{ maxWidth: '110px' }}>{/* Date */}
                             <div className="ui-form-v__field-input">
-                                <input value={mmValues.movement_date || ''}               
-                                    className="ui-form-v__input" 
-                                    disabled={disableEntry}  
-                                    placeholder="dd-mm-yyyy"  
+                                <input value={mmValues.movement_date || ''}
+                                    name={`mm-${batchIndex}-movement_date`}
+                                    className="ui-form-v__input"
+                                    disabled={disableEntry}
+                                    placeholder="YYYY-MM-DD"
                                     onChange={e => setFieldValue('movement_date', batchIndex, e.target.value)}
                                     onBlur={handleBlur}
                                 />
@@ -100,6 +110,7 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                         <div className="ui-form-v__field" style={{ maxWidth: '250px' }}>{/* Category */}
                             <div className="ui-form-v__field-input">
                                 <Select
+                                    name={`mm-${batchIndex}-category`}
                                     classNamePrefix="react-select"
                                     className="ui-form__react-select"
                                     disabled={disableEntry}
@@ -113,6 +124,7 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                         <div className="ui-form-v__field" style={{ maxWidth: '300px' }}>{/* Tags */}
                             <div className="ui-form-v__field-input">
                                 <CreatableSelect
+                                    name={`mm-${batchIndex}-tags`}
                                     className="ui-form__react-select"
                                     classNamePrefix="react-select"
                                     styles={formReactSelectStyles}
@@ -125,14 +137,27 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                                 />
                             </div>
                         </div>
-                        <div className="ui-form-v__field" style={{ maxWidth: '140px' }}>{/* Actions */}                            
+                        <div className="ui-form-v__field" style={{ maxWidth: '140px' }}>{/* Actions */}
                             <div className="ui-form-v__field-input">
-                                <i className="fas fa-cog icon-control" tabIndex="0" onClick={() => toggleAdvancedOptions(batchIndex)} />
-                                <i className="far fa-copy icon-control" tabIndex="0" onClick={() => cloneMoneyMovement(batchIndex)} />
+                                <i className="fas fa-cog icon-control" tabIndex="0"
+                                    onClick={() => toggleAdvancedOptions(batchIndex)}
+                                    data-control={`mm-${batchIndex}-advanced-options`}
+                                />
+                                <i className="far fa-copy icon-control" tabIndex="0"
+                                    onClick={() => cloneMoneyMovement(batchIndex)}
+                                    data-control={`mm-${batchIndex}-copy`}
+                                />
                                 {values.length > 1 &&
-                                    <i className="fas fa-trash icon-control" tabIndex="0" onClick={() => deleteMoneyMovement(batchIndex)} />}
+                                    <i className="fas fa-trash icon-control" tabIndex="0"
+                                        onClick={() => deleteMoneyMovement(batchIndex)}
+                                        data-control={`mm-${batchIndex}-copy`}
+                                    />
+                                }
                                 {batchIndex === values.length - 1 &&
-                                    <i className="fas fa-plus icon-control" tabIndex="0" onClick={() => addMoneyMovement()} />  
+                                    <i className="fas fa-plus icon-control" tabIndex="0"
+                                        onClick={() => addMoneyMovement()}
+                                        data-control={`add-money-movement`}
+                                    />
                                 }
                             </div>
                         </div>
@@ -145,6 +170,7 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                                 <label className="ui-form-v__label" htmlFor="money-movement-context">Context</label>
                                 <div className="ui-form-v__field-input">
                                     <Select
+                                        name={`mm-${batchIndex}-context`}
                                         classNamePrefix="react-select"
                                         className="ui-form__react-select"
                                         disabled={disableEntry}
@@ -159,9 +185,10 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                                 <label className="ui-form-v__label" htmlFor="money-movement-description">Description</label>
                                 <div className="ui-form-v__field-input">
                                     <textarea
-                                        value={mmValues.description || ''}  
-                                        className="ui-form-v__textarea"  
-                                        disabled={disableEntry}                
+                                        name={`mm-${batchIndex}-description`}
+                                        value={mmValues.description || ''}
+                                        className="ui-form-v__textarea"
+                                        disabled={disableEntry}
                                         onChange={e => setFieldValue('description', batchIndex, e.target.value)}
                                         onBlur={handleBlur}
                                     />
@@ -172,13 +199,15 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                             <div className="ui-form-v__field">{/* Users */}
                                 <div className="ui-form-v__field-input">
                                     <UserAssignment
+                                        namePrefix={`mm-${batchIndex}-`}
                                         users={users}
                                         usersRef={finance.users}
                                         values={mmValues}
                                         addNewUserRel={(newUserRel) => addNewUserRel(batchIndex, newUserRel)}
                                         removeUserRel={(index) => removeUserRel(batchIndex, index)}
-                                        setUserPercentage={(index, percentage) => setUserPercentage(batchIndex, index, percentage)}
+                                        setUserAmount={(index, amount) => setUserAmount(batchIndex, index, amount)}
                                         disabled={disableEntry}
+                                        mainAmount={mmValues.amount}
                                     />
                                 </div>
                             </div>

@@ -13,9 +13,12 @@ export function newMoneyMovement() {
         movement_date: null,
         context: null,
         category: null,
-        users: [],
-        users_relation: [],
+        user: null,
+        other_users: [],
         one_time: false,
+        master: null,
+        master_total: 0,
+        incomplete_total: false,
     };
 }
 
@@ -37,10 +40,16 @@ export class MoneyMovementEntity extends BaseEntity {
             fetchActionSet: SET_MONEY_MOVEMENTS,
             ...options
         });
-    }    
+    }
 
     save (entry) {
-        return super.save(entry, { autoGet: true, actionSingleSet: SET_MONEY_MOVEMENT });
+        const saveEntry = { ...entry };
+        saveEntry.amount = parseFloat(saveEntry.amount);
+        saveEntry.other_users = [...entry.other_users].map(ou => {
+            ou.amount = parseFloat(ou.amount);
+            return ou;
+        });
+        return super.save(saveEntry, { autoGet: true, actionSingleSet: SET_MONEY_MOVEMENT });
     }
 
     delete (id) {

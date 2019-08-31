@@ -16,12 +16,14 @@ import { MoneyMovementForm } from './MoneyMovementForm';
 
 
 function MoneyMovementFormPage({ match, history, finance }) {
-    const { moneyMovements } = finance;    
+    const { moneyMovements } = finance;
     const loggedUser = getCurrentUser();
 
     const initialMoneyMovement = match.params && match.params.id
         ? moneyMovements[+match.params.id] || newMoneyMovement()
         : newMoneyMovement();
+    initialMoneyMovement.amount = initialMoneyMovement.amount + '';
+    if (!initialMoneyMovement.user) initialMoneyMovement.user = loggedUser.id;
 
     const [moneyMovement, setMoneyMovement] = useState(initialMoneyMovement);
 
@@ -45,7 +47,7 @@ function MoneyMovementFormPage({ match, history, finance }) {
         {props => {
             const { values, isSubmitting, handleSubmit, setSubmitting } = props;
 
-            const deleteMoneyMovement = () => {                
+            const deleteMoneyMovement = () => {
                 setSubmitting(true);
                 moneyMovementsEntity.delete(moneyMovement.id).then(() => {
                     setSubmitting(false);
@@ -57,7 +59,7 @@ function MoneyMovementFormPage({ match, history, finance }) {
                 isSubmitting={isSubmitting}
                 deleteMoneyMovement={initialMoneyMovement.id ? deleteMoneyMovement : null}
             />;
-            return <form onSubmit={handleSubmit}>  
+            return <form onSubmit={handleSubmit}>
                 <PageHeader controls={controls}>
                     <Link to={`${FINANCE_BASE_URL}`}
                         className={`ui-page-header ui-page-header__breadcrumb`}
@@ -101,7 +103,7 @@ function Controls({ isSubmitting, deleteMoneyMovement }) {
         >Cancel</Link>
         <button
             disabled={isSubmitting ? true : false}
-            type="submit"            
+            type="submit"
             className={`${baseClass} ui-button--positive`}
         >Save</button>
     </Fragment>;

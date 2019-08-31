@@ -22,13 +22,13 @@ function MoneyMovementDetail({ moneyMovement, finance }) {
             <div className="col-xs-12 col-sm-6">
                 <div className="ui-form__field">
                     <label className="ui-form__label w-100">Amount</label>
-                    <div className="ui-form__field-input">{moneyMovement.movement}{moneyMovement.amount}</div>                        
+                    <div className="ui-form__field-input">{moneyMovement.movement}{moneyMovement.amount}</div>
                 </div>
             </div>
             <div className="col-xs-12 col-sm-6">
                 <div className="ui-form__field">
                     <label className="ui-form__label w-100">Date</label>
-                    <div className="ui-form__field-input">{moneyMovement.movement_date}</div>                        
+                    <div className="ui-form__field-input">{moneyMovement.movement_date}</div>
                 </div>
             </div>
         </div>
@@ -40,7 +40,7 @@ function MoneyMovementDetail({ moneyMovement, finance }) {
                         <Link to={`${FINANCE_BASE_URL}/categories/${category.id}`}>
                             <label className="ui-tag" style={categoryStyle}>{category.name}</label>
                         </Link>
-                    </div>                        
+                    </div>
                 </div>
             </div>
             <div className="col-xs-12 col-sm-6">
@@ -48,20 +48,20 @@ function MoneyMovementDetail({ moneyMovement, finance }) {
                     <label className="ui-form__label w-100">Context</label>
                     <div className="ui-form__field-input">
                         {context && <label className="ui-tag" style={contextStyle}>{context.name}</label>}
-                    </div>                        
+                    </div>
                 </div>
             </div>
         </div>
-        {moneyMovement.movement === '-' && 
+        {moneyMovement.movement === '-' &&
             <div className="row">
                 <div className="col-xs-12 col-sm-6">
                     <div className="ui-form__field" style={{ alignItems: 'flex-start' }}>
                         <label className="ui-form__label w-100">Users</label>
                         <div className="ui-form__field-input">
-                            {moneyMovement.users_relation.map(ur => {
-                                return <div key={ur.id}>{ur.percentage}% paid by {finance.users[ur.user].first_name}</div>;
+                            {moneyMovement.other_users.map(ur => {
+                                return <div key={ur.id}>{ur.amount} paid by {finance.users[ur.user].first_name}</div>;
                             })}
-                        </div>                        
+                        </div>
                     </div>
                 </div>
                 <div className="col-xs-12 col-sm-6">
@@ -71,7 +71,7 @@ function MoneyMovementDetail({ moneyMovement, finance }) {
                             {moneyMovement.tags.map(tag => {
                                 return <label className="ui-tag ui-tag--primary" key={tag}>{tag}</label>;
                             })}
-                        </div>                        
+                        </div>
                     </div>
                 </div>
             </div>
@@ -81,7 +81,7 @@ function MoneyMovementDetail({ moneyMovement, finance }) {
                 <div className="col-xs-12">
                     <div className="ui-form__field">
                         <label className="ui-form__label w-100">Description</label>
-                        <div className="ui-form__field-input">{moneyMovement.description}</div>                        
+                        <div className="ui-form__field-input">{moneyMovement.description}</div>
                     </div>
                 </div>
             </div>

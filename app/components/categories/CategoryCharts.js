@@ -7,8 +7,8 @@ export function CategoryLineChart({ category, moneyMovements, chartStyle }) {
     const data = [];
 
     const averageFlowSign = category.average_flow === 'income' ? '+' : '-';
-    moneyMovements.forEach(mm => {
-        labels.push(mm.movement_date);        
+    moneyMovements.sort((a, b) => a.movement_date > b.movement_date ? 1 : -1).forEach(mm => {
+        labels.push(mm.movement_date);
         data.push(parseFloat(mm.amount) * (averageFlowSign === mm.movement ? 1 : -1));
     });
 
@@ -56,11 +56,11 @@ CategoryLineChart.propTypes = {
 export function CategoryMonthlyChart({ category, moneyMovements, chartStyle }) {
     const data = [];
     const groups = {};
-    
+
     moneyMovements.forEach(mm => {
         const group = mm.movement_date.substr(0, 7);
         if (!groups[group]) groups[group] = 0;
-        groups[group] += parseFloat(mm.amount);        
+        groups[group] += parseFloat(mm.amount);
     });
 
     const labels = Object.keys(groups);

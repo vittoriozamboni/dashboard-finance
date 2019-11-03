@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 import { CodeHighlight } from 'components/style/CodeHighlight';
+import { Icon } from 'components/ui/Icon';
 import { Timeline } from 'components/ui/Timeline';
 import { dateToUI } from 'utils/dates';
 
@@ -30,16 +31,16 @@ ContextsTimeline.propTypes = {
 
 
 function Content({ context, moneyMovements }) {
-    const titleStyle = context.attributes_ui.color ? { color: context.attributes_ui.color } : {};    
+    const titleStyle = context.attributes_ui.color ? { color: context.attributes_ui.color } : {};
 
     return <div className="ui-text__padded">
-        <Link to={`${FINANCE_BASE_URL}/contexts/${context.id}`}> 
-            <h3 style={titleStyle} className="ui-title--top">{context.name}</h3>
+        <Link to={`${FINANCE_BASE_URL}/contexts/${context.id}`}>
+            <h3 style={titleStyle} className="ui-title">{context.name}</h3>
         </Link>
         <div className="row">
             <div className="col-sm-12 col-md-6">
-                <div className="neutral-light-d2" >
-                    <i className="fas fa-calendar-alt neutral-light-d2" /> {dateToUI(context.start_date)}
+                <div className="neutral-light-d2">
+                    <Icon name="calendar-alt" extraClasses="neutral-light-d2" /> {dateToUI(context.start_date)}
                     {context.end_date && context.end_date !== context.start_date ? ` to ${dateToUI(context.end_date)}` : ''}
                 </div>
                 <div className="ui-text">

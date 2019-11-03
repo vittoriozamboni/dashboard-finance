@@ -4,6 +4,7 @@ import Select from 'react-select';
 import CreatableSelect from 'react-select/lib/Creatable';
 
 import { getFormReactSelectStyles } from 'components/style/formReactSelect';
+import { Icon } from 'components/ui/Icon';
 
 import { withFinance } from '../../storeConnection';
 import { UserAssignment } from './forms/UserAssignment';
@@ -139,22 +140,22 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                         </div>
                         <div className="ui-form-v__field" style={{ maxWidth: '140px' }}>{/* Actions */}
                             <div className="ui-form-v__field-input">
-                                <i className="fas fa-cog icon-control" tabIndex="0"
+                                <Icon name="cog" extraClasses="icon-control" tabIndex="0"
                                     onClick={() => toggleAdvancedOptions(batchIndex)}
                                     data-control={`mm-${batchIndex}-advanced-options`}
                                 />
-                                <i className="far fa-copy icon-control" tabIndex="0"
+                                <Icon name="copy" category="far" extraClasses="icon-control" tabIndex="0"
                                     onClick={() => cloneMoneyMovement(batchIndex)}
                                     data-control={`mm-${batchIndex}-copy`}
                                 />
                                 {values.length > 1 &&
-                                    <i className="fas fa-trash icon-control" tabIndex="0"
+                                    <Icon name="trash" extraClasses="icon-control" tabIndex="0"
                                         onClick={() => deleteMoneyMovement(batchIndex)}
                                         data-control={`mm-${batchIndex}-copy`}
                                     />
                                 }
                                 {batchIndex === values.length - 1 &&
-                                    <i className="fas fa-plus icon-control" tabIndex="0"
+                                    <Icon name="plus" extraClasses="icon-control" tabIndex="0"
                                         onClick={() => addMoneyMovement()}
                                         data-control={`add-money-movement`}
                                     />

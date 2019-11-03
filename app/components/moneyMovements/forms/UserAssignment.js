@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
+import { Icon } from 'components/ui/Icon';
+
 
 export function UserAssignment({ users, usersRef, values, addNewUserRel, removeUserRel, setUserAmount, disabled, mainAmount, namePrefix='' }) {
     const [state, setState] = useState({
@@ -40,7 +42,7 @@ export function UserAssignment({ users, usersRef, values, addNewUserRel, removeU
                 </td>
                 <td>
                     {!disabled && state.newUserRel.user && state.newUserRel.amount && parseFloat(state.newUserRel.amount) &&
-                        <i className="fas fa-plus icon-control"
+                        <Icon name="plus" extraClasses="icon-control"
                             data-control={`${namePrefix}new-user-rel-add`}
                             onClick={() => {
                                 addNewUserRel(state.newUserRel);
@@ -65,7 +67,7 @@ export function UserAssignment({ users, usersRef, values, addNewUserRel, removeU
                         />
                     </td>
                     <td>
-                        {!disabled && <i className="fas fa-minus icon-control" onClick={() => removeUserRel(index)} />}
+                        {!disabled && <Icon name="minus" extraClasses="icon-control" onClick={() => removeUserRel(index)} />}
                     </td>
                 </tr>;
             })}

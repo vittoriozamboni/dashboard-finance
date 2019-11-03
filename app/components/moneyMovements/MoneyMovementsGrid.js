@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 import { Grid } from 'components/grid/Grid';
+import { Icon } from 'components/ui/Icon';
 import { ModalTrigger } from 'components/ui/Modal';
 
 import { FINANCE_BASE_URL } from '../../constants';
@@ -19,11 +20,11 @@ function MoneyMovementsGrid({ moneyMovements, finance }) {
         .map(mm => ({
             ...mm,
             category: <Link to={`${FINANCE_BASE_URL}/categories/${mm.category}`}>{finance.categories[mm.category].full_name}</Link>,
-            movement_icon: mm.movement === '-' ? <i className="fas fa-arrow-down red" /> : <i className="fas fa-arrow-up teal" />,
+            movement_icon: mm.movement === '-' ? <Icon name="arrow-down" extraClasses="red" /> : <Icon name="arrow-up" extraClasses="teal" />,
             master_total: parseFloat(mm.master_total) ? mm.master_total : '',
             actions: <Fragment>
                 <ModalTrigger
-                    Trigger={({ setViewModalWindow }) => <i className="far fa-file-alt cursor-pointer" onClick={() => setViewModalWindow(true)} />}
+                    Trigger={({ setViewModalWindow }) => <Icon name="file-alt" category="far" extraClasses="cursor-pointer" onClick={() => setViewModalWindow(true)} />}
                     getModalWindowProps={({ setViewModalWindow }) => {
                         return {
                             title: 'Money Movement Detail',

@@ -20,11 +20,11 @@ function MoneyMovementsGrid({ moneyMovements, finance }) {
         .map(mm => ({
             ...mm,
             category: <Link to={`${FINANCE_BASE_URL}/categories/${mm.category}`}>{finance.categories[mm.category].full_name}</Link>,
-            movement_icon: mm.movement === '-' ? <Icon name="arrow-down" extraClasses="red" /> : <Icon name="arrow-up" extraClasses="teal" />,
+            movement_icon: mm.movement === '-' ? <Icon name="arrow_down" className="red" /> : <Icon name="arrow_up" className="teal" />,
             master_total: parseFloat(mm.master_total) ? mm.master_total : '',
             actions: <Fragment>
                 <ModalTrigger
-                    Trigger={({ setViewModalWindow }) => <Icon name="file-alt" category="far" extraClasses="cursor-pointer" onClick={() => setViewModalWindow(true)} />}
+                    Trigger={({ setViewModalWindow }) => <Icon name="my_library_books" modifiers="clickable" onClick={() => setViewModalWindow(true)} />}
                     getModalWindowProps={({ setViewModalWindow }) => {
                         return {
                             title: 'Money Movement Detail',

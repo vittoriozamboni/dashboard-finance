@@ -140,22 +140,22 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                         </div>
                         <div className="ui-form-v__field" style={{ maxWidth: '140px' }}>{/* Actions */}
                             <div className="ui-form-v__field-input">
-                                <Icon name="cog" extraClasses="icon-control" tabIndex="0"
+                                <Icon name="settings" className="ui-icon__control" tabIndex="0" size="smaller"
                                     onClick={() => toggleAdvancedOptions(batchIndex)}
                                     data-control={`mm-${batchIndex}-advanced-options`}
                                 />
-                                <Icon name="copy" category="far" extraClasses="icon-control" tabIndex="0"
+                                <Icon name="content_copy" category="far" className="ui-icon__control" tabIndex="0" size="smaller"
                                     onClick={() => cloneMoneyMovement(batchIndex)}
                                     data-control={`mm-${batchIndex}-copy`}
                                 />
                                 {values.length > 1 &&
-                                    <Icon name="trash" extraClasses="icon-control" tabIndex="0"
+                                    <Icon name="delete" className="ui-icon__control" tabIndex="0" size="smaller"
                                         onClick={() => deleteMoneyMovement(batchIndex)}
                                         data-control={`mm-${batchIndex}-copy`}
                                     />
                                 }
                                 {batchIndex === values.length - 1 &&
-                                    <Icon name="plus" extraClasses="icon-control" tabIndex="0"
+                                    <Icon name="add" className="ui-icon__control" tabIndex="0" size="smaller"
                                         onClick={() => addMoneyMovement()}
                                         data-control={`add-money-movement`}
                                     />

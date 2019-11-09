@@ -42,7 +42,7 @@ export function UserAssignment({ users, usersRef, values, addNewUserRel, removeU
                 </td>
                 <td>
                     {!disabled && state.newUserRel.user && state.newUserRel.amount && parseFloat(state.newUserRel.amount) &&
-                        <Icon name="plus" extraClasses="icon-control"
+                        <Icon name="add" className="ui-icon__control"
                             data-control={`${namePrefix}new-user-rel-add`}
                             onClick={() => {
                                 addNewUserRel(state.newUserRel);
@@ -67,7 +67,7 @@ export function UserAssignment({ users, usersRef, values, addNewUserRel, removeU
                         />
                     </td>
                     <td>
-                        {!disabled && <Icon name="minus" extraClasses="icon-control" onClick={() => removeUserRel(index)} />}
+                        {!disabled && <Icon name="remove" className="ui-icon__control" onClick={() => removeUserRel(index)} />}
                     </td>
                 </tr>;
             })}

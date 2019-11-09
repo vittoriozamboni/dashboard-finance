@@ -40,7 +40,7 @@ function Content({ context, moneyMovements }) {
         <div className="row">
             <div className="col-sm-12 col-md-6">
                 <div className="neutral-light-d2">
-                    <Icon name="calendar-alt" extraClasses="neutral-light-d2" /> {dateToUI(context.start_date)}
+                    <Icon name="calendar_today" className="neutral-light-d2" /> {dateToUI(context.start_date)}
                     {context.end_date && context.end_date !== context.start_date ? ` to ${dateToUI(context.end_date)}` : ''}
                 </div>
                 <div className="ui-text">

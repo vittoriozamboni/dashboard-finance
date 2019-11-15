@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Route, Switch, withRouter } from "react-router-dom";
 
@@ -18,46 +18,39 @@ import { MoneyMovementsLanding } from './components/moneyMovements/MoneyMovement
 
 export { FINANCE_BASE_URL };
 
-class FinanceLanding extends Component {
-    state = {
-        appInitialized: false
+
+function FinanceLanding({ finance }) {
+    const [state, setState] = useState({ appInitialized: false });
+
+    const setInitialized = () => setState(state => ({ ...state, appInitialized: true }));
+    const initialize = () => {
+        preload().then(setInitialized);
+    };
+
+    useEffect(() => {
+        if (!finance.initialized)
+            initialize();
+        else
+            setInitialized();
+    }, [])
+
+    const { appInitialized } = state;
+
+    if (!appInitialized) {
+        return <FullSectionLoader />;
     }
 
-    componentDidMount() {
-        const { initialized } = this.props.finance;
-        if (initialized) {
-            this.setInitialized();
-        } else {
-            this.initialize();
-        }
-    }
-
-    initialize = () => {
-        preload().then(() => this.setInitialized());
-    }
-
-    setInitialized = () => { this.setState({ appInitialized: true }); }
-
-    render() {
-        const { appInitialized } = this.state;
-
-        if (!appInitialized) {
-            return <FullSectionLoader />;
-        }
-
-        return <Switch>
-            <Route exact path={FINANCE_BASE_URL} component={FinanceHome} />
-            <Route path={`${FINANCE_BASE_URL}/categories`} component={CategoriesLanding} />
-            <Route path={`${FINANCE_BASE_URL}/contexts`} component={ContextsLanding} />
-            <Route path={`${FINANCE_BASE_URL}/money-movements`} component={MoneyMovementsLanding} />
-        </Switch>;
-    }
+    return <Switch>
+        <Route exact path={FINANCE_BASE_URL} component={FinanceHome} />
+        <Route path={`${FINANCE_BASE_URL}/categories`} component={CategoriesLanding} />
+        <Route path={`${FINANCE_BASE_URL}/contexts`} component={ContextsLanding} />
+        <Route path={`${FINANCE_BASE_URL}/money-movements`} component={MoneyMovementsLanding} />
+    </Switch>;
 }
 
 FinanceLanding.propTypes = {
-    match: PropTypes.object,
     finance: PropTypes.object,
 };
 
-const ConnectedFinanceLanding = withRouter(withFinance(FinanceLanding));
+const ConnectedFinanceLanding = withFinance(FinanceLanding);
 export { ConnectedFinanceLanding as FinanceLanding };

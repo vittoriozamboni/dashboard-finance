@@ -1,10 +1,12 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
+import { Breadcrumbs } from 'components/ui/Breadcrumbs';
+import { PageBody } from 'components/ui/PageBody';
 import { PageHeader } from 'components/ui/PageHeader';
 
-import { FINANCE_BASE_URL } from '../../constants';
+import { FINANCE_BASE_URL, FINANCE_BREADCRUMBS } from '../../constants';
 import { withFinance } from '../../storeConnection';
 import { CategoriesTiles } from './CategoriesTiles';
 
@@ -13,24 +15,22 @@ function Categories({ finance }) {
 
     const controls = <Controls />;
 
-    return <div>
+    return <Fragment>
         <PageHeader controls={controls}>
-            <Link to={`${FINANCE_BASE_URL}`}
-                className={`ui-page-header ui-page-header__breadcrumb`}
-            >Finance</Link>
+            <Breadcrumbs breadcrumbs={FINANCE_BREADCRUMBS} />
             Categories
         </PageHeader>
-        <div  className="ui-page-body">                        
+        <PageBody>
             <CategoriesTiles categoriesTree={categoriesTree} />
-        </div>
-    </div>;
+        </PageBody>
+    </Fragment>;
 }
 
 Categories.propTypes = {
     finance: PropTypes.object,
 };
 
-const connectedCategories = withRouter(withFinance(Categories));
+const connectedCategories = withFinance(Categories);
 export { connectedCategories as Categories };
 
 function Controls() {

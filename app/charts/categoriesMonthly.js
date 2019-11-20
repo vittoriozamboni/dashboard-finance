@@ -1,22 +1,10 @@
-import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 
-export function categoriesMonthly(chart, { finance, showLastMonths }) {
-    const incoming = Object.values(finance.categories).filter(c => c.name === 'Incoming')[0];
+import { moneyMovementsByPeriod } from '../data/moneyMovementsDataUtils';
 
-    // Divide by months
-    const monthsData = Object.values(finance.moneyMovements).reduce((months, mm) => {
-        const month = `${mm.movement_date.split('-')[0]}-${mm.movement_date.split('-')[1]}`;
-        if (!months[month]) months[month] = {};
-        // Group by first level - if parent is set, use it
-        const categoryId = finance.categories[mm.category].parent || mm.category;
-        // Ignore "incoming" category
-        if (+categoryId === incoming.id) return months;
 
-        months[month] += parseFloat(mm.amount);
-        return months;
-    }, {});
-
+export function categoriesMonthly(chart, { finance, previousMonths }) {
+    const monthsData = moneyMovementsByPeriod({ finance, previousMonths });
     const monthlyBudget = Object.values(finance.categories).reduce((budget, category) => {
         const catBudgets = category.user_data.budgets;
         if (catBudgets.length > 0 && !category.parent)
@@ -24,14 +12,11 @@ export function categoriesMonthly(chart, { finance, showLastMonths }) {
         return budget;
     }, 0);
 
-    let months = Object.keys(monthsData).sort();
-    if (showLastMonths)
-        months = months.slice(-1 * showLastMonths);
-
     chart.data = Object.keys(monthsData).reduce((all, month) => {
-        if (months.includes(month))
-            return [...all, { date: month + '-01', amount: monthsData[month] }];
-        return all;
+        return [...all, {
+            date: month + '-01',
+            amount: monthsData[month].reduce((tot, m) => tot + parseFloat(m.amount), 0)
+        }];
     }, []);
 
         chart.dateFormatter.inputDateFormat = "YYYY-MM-yy";

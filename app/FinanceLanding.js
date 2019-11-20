@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Route, Switch, withRouter } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 
 import { FullSectionLoader } from 'components/ui/Loader';
 
@@ -32,7 +32,7 @@ function FinanceLanding({ finance }) {
             initialize();
         else
             setInitialized();
-    }, [])
+    }, []); // eslint-disable-line
 
     const { appInitialized } = state;
 

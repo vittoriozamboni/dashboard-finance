@@ -1,39 +1,22 @@
-import * as am4core from "@amcharts/amcharts4/core";
-import * as am4charts from "@amcharts/amcharts4/charts";
+import * as am4core from '@amcharts/amcharts4/core';
+import * as am4charts from '@amcharts/amcharts4/charts';
+
+import { moneyMovementsByPeriod } from '../data/moneyMovementsDataUtils';
+
 
 export function categoriesDetailedMonthly(chart, { finance, showLastMonths }) {
-    // Divide by months
-    const monthsData = Object.values(finance.moneyMovements).reduce((months, mm) => {
-        const month = `${mm.movement_date.split('-')[0]}-${mm.movement_date.split('-')[1]}`;
-        if (!months[month]) months[month] = {};
-        // Group by first level - if parent is set, use it
-        const categoryId = finance.categories[mm.category].parent || mm.category;
-        if (!months[month][categoryId]) months[month][categoryId] = 0;
-        months[month][categoryId] += parseFloat(mm.amount);
-        return months;
-    }, {});
+    const monthsData = moneyMovementsByPeriod({ finance, previousMonths: showLastMonths });
 
     // Get the top 3 and compress other values into "Others"
     chart.data = [];
     const allCategories = {};
 
-    let months = Object.keys(monthsData).sort();
-    if (showLastMonths)
-        months = months.slice(-1 * showLastMonths);
-
-    months.forEach(month => {
+    Object.keys(monthsData).forEach(month => {
         const data = monthsData[month];
         let categories = Object.keys(data).map(category => ({
-            category: parseInt(category), amount: data[category]
+            category: parseInt(category),
+            amount: data[category].reduce((tot, m) => tot + parseFloat(m.amount), 0)
         }));
-        /*
-        if (categories.length > 3) {
-            categories.sort((a, b) => a.amount > b.amount ? -1 : 1);
-            categories = categories.slice(0, 3).concat(
-                { category: 'others', amount: categories.slice(3).reduce((tot, cat) => tot + cat.amount, 0) }
-            );
-        }
-        */
         categories.forEach(category => allCategories[category.category] = true);
         chart.data.push({
             month,

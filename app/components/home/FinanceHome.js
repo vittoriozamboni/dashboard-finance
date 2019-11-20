@@ -1,7 +1,7 @@
-import React, { Fragment, useEffect, useState } from 'react';
-// import PropTypes from 'prop-types';
+import React from 'react';
 import { withRouter } from "react-router-dom";
 
+import { RowBlock, ColumnBlock } from 'components/ui/Blocks';
 import { Breadcrumbs } from 'components/ui/Breadcrumbs';
 import { Page } from 'components/ui/Page';
 import { PageHeader } from 'components/ui/PageHeader';
@@ -10,16 +10,15 @@ import { PageBody } from 'components/ui/PageBody';
 import '../categories/categories.scss';
 
 import { FINANCE_BASE_URL, FINANCE_BREADCRUMBS } from '../../constants';
-import { withFinance } from '../../storeConnection';
 import { MainGraph } from './MainGraph';
 import { BrowseCard } from './BrowseCard';
-import { RowBlock, ColumnBlock } from 'components/ui/Blocks';
+import { PeriodSelector } from '../shared/PeriodSelector';
 
 
 function FinanceHome({ history }) {
 
     return <Page>
-        <PageHeader>
+        <PageHeader controls={<PeriodSelector />}>
             <Breadcrumbs breadcrumbs={[FINANCE_BREADCRUMBS[0]]} />
             Finance
         </PageHeader>
@@ -70,5 +69,5 @@ function FinanceHome({ history }) {
     </Page>;
 };
 
-const connectedFinanceHome = withRouter(withFinance(FinanceHome));
+const connectedFinanceHome = withRouter(FinanceHome);
 export { connectedFinanceHome as FinanceHome };

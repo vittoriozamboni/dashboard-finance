@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import Select from 'react-select';
-import CreatableSelect from 'react-select/lib/Creatable';
+import CreatableSelect from 'react-select/creatable';
 
 import { getFormReactSelectStyles } from 'components/style/formReactSelect';
 import { Icon } from 'components/ui/Icon';

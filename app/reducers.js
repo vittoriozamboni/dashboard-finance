@@ -1,7 +1,11 @@
 import { listToObject } from 'utils/data';
 
 import * as actions from './actions';
+import { FINANCE_PERIODS_DEFAULT } from './constants';
+import { getSavedState, saveState } from './browserStorage';
 import { createCategoriesTree, createSubCategoriesTree } from './data/categoriesDataUtils';
+
+const savedState = getSavedState();
 
 const INITIAL_STATE = {
     initialized: false,
@@ -12,6 +16,7 @@ const INITIAL_STATE = {
     moneyMovements: {},
     tags: {},
     users: {},
+    selectedPeriod: savedState.selectedPeriod || FINANCE_PERIODS_DEFAULT,
 };
 
 const updateCategories = (state, categories) => {
@@ -86,6 +91,12 @@ const finance = (currentState, action) => {
         case actions.SET_USERS:
             const users = listToObject(action.data, 'id');
             return { ...state, users };
+
+        case actions.SET_SELECTED_PERIOD:
+            const newState = { ...state, selectedPeriod: action.selectedPeriod };
+            saveState(newState);
+            return newState;
+
         default:
             return state;
     }

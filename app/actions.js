@@ -40,3 +40,6 @@ export const DELETE_TAG = 'DELETE_TAG';
 // Set a list of users
 export const SET_USERS = 'SET_USERS';
 
+// Set the default period of time for the money movements to be used
+// in graphs
+export const SET_SELECTED_PERIOD = 'SET_SELECTED_PERIOD';

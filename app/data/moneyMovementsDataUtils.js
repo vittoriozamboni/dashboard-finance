@@ -34,7 +34,8 @@ export function getMonthsByBoundaries({ fromYearMonth, toYearMonth, previousMont
     return months.sort();
 }
 
-export function moneyMovementsByPeriod({ finance, groupParent=true, excludeIncoming=true, fromYearMonth, toYearMonth, previousMonths }) {
+export function moneyMovementsByPeriod({ finance, groupParent=true, excludeIncoming=true, fromYearMonth, toYearMonth, previousMonths, moneyMovements }) {
+    const mms = moneyMovements || finance.moneyMovements;
     const incoming = Object.values(finance.categories).filter(c => c.name === 'Incoming')[0];
     const filterMonths = getMonthsByBoundaries(
         { fromYearMonth, toYearMonth, previousMonths }
@@ -45,7 +46,7 @@ export function moneyMovementsByPeriod({ finance, groupParent=true, excludeIncom
     const haveFilterMonths = Object.keys(filterMonths).length > 0;
 
     // Divide by months
-    const monthsData = Object.values(finance.moneyMovements).reduce((months, mm) => {
+    const monthsData = Object.values(mms).reduce((months, mm) => {
         const month = `${mm.movement_date.split('-')[0]}-${mm.movement_date.split('-')[1]}`;
         // Ignore if the month is not in the list
         if (haveFilterMonths && !filterMonths[month]) return months;

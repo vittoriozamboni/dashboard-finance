@@ -23,6 +23,7 @@ export function PeriodSelector() {
         value={finance.selectedPeriod}
         onChange={period => dispatch({ type: SET_SELECTED_PERIOD, selectedPeriod: period.value })}
         options={periods}
+        isSearchable={false}
     />;
 }
 

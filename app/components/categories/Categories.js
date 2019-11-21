@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import * as am4core from '@amcharts/amcharts4/core';
@@ -20,16 +20,17 @@ import { PeriodSelector } from '../shared/PeriodSelector';
 
 
 function Categories({ finance }) {
+    const pageBodyRef = useRef(null);
     const { categoriesTree } = finance;
 
     const controls = <Controls />;
 
     return <Fragment>
-        <PageHeader controls={controls}>
+        <PageHeader controls={controls} scrollRef={pageBodyRef}>
             <Breadcrumbs breadcrumbs={FINANCE_BREADCRUMBS} />
             Categories
         </PageHeader>
-        <PageBody>
+        <PageBody fullHeight={true} withPageHeader={true} pageBodyRef={pageBodyRef}>
             <CategoriesGraph finance={finance} />
             <CategoriesList categoriesTree={categoriesTree} />
         </PageBody>

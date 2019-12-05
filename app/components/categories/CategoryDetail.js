@@ -1,6 +1,6 @@
-import React, { Fragment, useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { withRouter, Link } from 'react-router-dom';
+import React, { Fragment, useState, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import { Link, useParams } from 'react-router-dom';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 
@@ -12,7 +12,6 @@ import { PageHeader } from 'components/ui/PageHeader';
 
 import { FINANCE_PERIODS } from '../../constants';
 import { CATEGORIES_BREADCRUMBS, CATEGORIES_BASE_URL } from './constants';
-import { withFinance } from '../../storeConnection';
 import { MoneyMovementEntity } from '../../models/moneyMovement';
 
 import { MoneyMovementsTable } from '../moneyMovements/MoneyMovementsTable';
@@ -20,17 +19,20 @@ import { moneyMovementsByPeriod } from '../../data/moneyMovementsDataUtils';
 import { timeHistogram } from '../../charts/histograms';
 import { PeriodSelector } from '../shared/PeriodSelector';
 
-function CategoryDetail({ match, finance }) {
+export function CategoryDetail() {
+    const finance = useSelector(state => state.finance);
+    const { id: paramsId } = useParams();
+
+    const pageBodyRef = useRef(null);
     const [moneyMovements, setMoneyMovements] = useState(null);
 
     const initialMovements = finance.moneyMovements;
 
-    const categoryId = +match.params.id;
-    const category = finance.categories[categoryId];
+    const category = finance.categories[+paramsId];
 
     useEffect(() => {
         const mmEntity = new MoneyMovementEntity();
-        const categoriesId = [categoryId, ...finance.subCategoriesTree[categoryId] || []];
+        const categoriesId = [category.id, ...finance.subCategoriesTree[category.id] || []];
         if (Object.keys(initialMovements).length === 0) {
             mmEntity.fetch().then(loadedMoneyMovements => {
                 setMoneyMovements(mmEntity.getByCategories(categoriesId, loadedMoneyMovements));
@@ -53,25 +55,17 @@ function CategoryDetail({ match, finance }) {
     </Fragment>;
 
     return <Page>
-        <PageHeader controls={controls}>
+        <PageHeader controls={controls} scrollRef={pageBodyRef}>
             <Breadcrumbs breadcrumbs={CATEGORIES_BREADCRUMBS} />
             {category.full_name}
         </PageHeader>
-        <PageBody>
+        <PageBody fullHeight={true} withPageHeader={true} pageBodyRef={pageBodyRef}>
             <CategoryChart finance={finance} moneyMovements={moneyMovements} />
             <MoneyMovementsTable finance={finance} moneyMovements={moneyMovements} />
         </PageBody>
     </Page>;
 
 }
-
-CategoryDetail.propTypes = {
-    match: PropTypes.object,
-    finance: PropTypes.object,
-};
-
-const connectedCategoryDetail = withRouter(withFinance(CategoryDetail));
-export { connectedCategoryDetail as CategoryDetail };
 
 
 function CategoryChart({ finance, moneyMovements }) {

@@ -1,5 +1,36 @@
 import * as am4charts from "@amcharts/amcharts4/charts";
 
+export function histogram(chart, data, propX, propY ) {
+    chart.data = data;
+
+    let categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+    categoryAxis.dataFields.category = propX;
+    categoryAxis.renderer.grid.template.location = 0;
+    categoryAxis.renderer.minGridDistance = 30;
+
+    categoryAxis.renderer.labels.template.adapter.add("dy", function(dy, target) {
+        if (target.dataItem && target.dataItem.index & 2 == 2) {
+            return dy + 25;
+        }
+        return dy;
+    });
+
+    let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+    // Create series
+    let series = chart.series.push(new am4charts.ColumnSeries());
+    series.dataFields.valueY = propY;
+    series.dataFields.categoryX = propX;
+    series.columns.template.tooltipText = "{categoryX}: [bold]{valueY}[/]";
+    series.columns.template.fillOpacity = .8;
+
+    let columnTemplate = series.columns.template;
+    columnTemplate.strokeWidth = 2;
+    columnTemplate.strokeOpacity = 1;
+
+    return { series, columnTemplate, valueAxis, categoryAxis };
+}
+
 export function timeHistogram(chart, data, { propY='amount', propX='date'} = {}) {
     chart.data = data;
 

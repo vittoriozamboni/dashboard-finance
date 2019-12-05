@@ -17,9 +17,9 @@ import { CategoryEntity, newCategory } from '../../models/category';
 import { CategoryForm } from './CategoryForm';
 
 export function CategoryPageForm() {
+    const finance = useSelector(state => state.finance);
     const history = useHistory();
     const { id: paramsId } = useParams();
-    const finance = useSelector(state => state.finance);
     const loggedUser = getCurrentUser();
     const { categories } = finance;
 
@@ -61,13 +61,13 @@ export function CategoryPageForm() {
                 <Page>
                     <PageHeader controls={controls}>
                         <Breadcrumbs breadcrumbs={CATEGORIES_BREADCRUMBS} />
-                        {category.id ? category.full_name : 'Add category'}
+                        {category.id ? `Edit ${category.full_name}` : 'Add category'}
                     </PageHeader>
                 </Page>
                 <PageBody>
                     <div style={{ maxWidth: 600 }}>
                         <CategoryForm {...props} category={category} />
-                        {loggedUser.is_superuser && <CodeHighlight>
+                        {loggedUser.is_superuser && <CodeHighlight toggle={{ initial: false }}>
                             {JSON.stringify(values, null, 2)}
                         </CodeHighlight>}
                     </div>

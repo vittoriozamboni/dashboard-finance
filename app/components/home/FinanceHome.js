@@ -1,5 +1,5 @@
 import React from 'react';
-import { withRouter } from "react-router-dom";
+import { withRouter } from 'react-router-dom';
 
 import { RowBlock, ColumnBlock } from 'components/ui/Blocks';
 import { Breadcrumbs } from 'components/ui/Breadcrumbs';

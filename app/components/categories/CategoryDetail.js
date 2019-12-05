@@ -10,7 +10,7 @@ import { Page } from 'components/ui/Page';
 import { PageBody } from 'components/ui/PageBody';
 import { PageHeader } from 'components/ui/PageHeader';
 
-import { FINANCE_BASE_URL , FINANCE_PERIODS } from '../../constants';
+import { FINANCE_PERIODS } from '../../constants';
 import { CATEGORIES_BREADCRUMBS, CATEGORIES_BASE_URL } from './constants';
 import { withFinance } from '../../storeConnection';
 import { MoneyMovementEntity } from '../../models/moneyMovement';
@@ -92,7 +92,7 @@ function CategoryChart({ finance, moneyMovements }) {
     }, [previousMonths, data]);
 
 
-    return <div id={monthChartContainerId} style={{ width: "100%", height: "300px" }}>
+    return <div id={monthChartContainerId} style={{ width: '100%', height: '300px' }}>
         <FullSectionLoader />
     </div>;
 }

@@ -1,23 +1,30 @@
 import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter, Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { Link, useParams, useHistory } from 'react-router-dom';
 import { Formik } from 'formik';
 
-import { getCurrentUser } from 'libs/authentication/utils';
+import { Breadcrumbs } from 'components/ui/Breadcrumbs';
+import { Button } from 'components/ui/Button';
+import { Page } from 'components/ui/Page';
+import { PageBody } from 'components/ui/PageBody';
 import { PageHeader } from 'components/ui/PageHeader';
 import { CodeHighlight } from 'components/style/CodeHighlight';
+import { getCurrentUser } from 'libs/authentication/utils';
 
-import { FINANCE_BASE_URL } from '../../constants';
-import { withFinance } from '../../storeConnection';
+import { CATEGORIES_BREADCRUMBS, CATEGORIES_BASE_URL } from './constants';
 import { CategoryEntity, newCategory } from '../../models/category';
 import { CategoryForm } from './CategoryForm';
 
-function CategoryPageForm({ match, history, finance }) {
-    const { categories } = finance;    
+export function CategoryPageForm() {
+    const history = useHistory();
+    const { id: paramsId } = useParams();
+    const finance = useSelector(state => state.finance);
     const loggedUser = getCurrentUser();
+    const { categories } = finance;
 
-    const initialCategory = match.params && match.params.id
-        ? categories[+match.params.id] || newCategory()
+    const initialCategory = paramsId
+        ? categories[+paramsId] || newCategory()
         : newCategory();
 
     const [category, setCategory] = useState(initialCategory);
@@ -30,7 +37,7 @@ function CategoryPageForm({ match, history, finance }) {
             categoryObj.save(values).then(response => {
                 setCategory(response);
                 setSubmitting(false);
-                history.push(`${FINANCE_BASE_URL}/categories`);
+                history.push(CATEGORIES_BASE_URL);
             });
         }}
     >
@@ -42,7 +49,7 @@ function CategoryPageForm({ match, history, finance }) {
                 setSubmitting(true);
                 categoryObj.delete(category.id).then(() => {
                     setSubmitting(false);
-                    history.push(`${FINANCE_BASE_URL}/categories`);
+                    history.push(CATEGORIES_BASE_URL);
                 });
             };
 
@@ -50,56 +57,42 @@ function CategoryPageForm({ match, history, finance }) {
                 isSubmitting={isSubmitting}
                 deleteCategory={initialCategory.id ? deleteCategory : null}
             />;
-            return <form onSubmit={handleSubmit}>  
-                <PageHeader controls={controls}>
-                    <Link to={`${FINANCE_BASE_URL}/categories/`}
-                        className={`ui-page-header ui-page-header__breadcrumb`}
-                    >Categories</Link>
-                    {category.id && <Fragment>
-                        <Link to={`${FINANCE_BASE_URL}/categories/${category.id}`}
-                            className={`ui-page-header ui-page-header__breadcrumb`}
-                        >{category.full_name}</Link>
-                        Edit
-                    </Fragment>}
-                    {!category.id && 'Add Category'}
-                </PageHeader>
-                <div className='ui-page-body ui-section'>
-                    <CategoryForm {...props} category={category} />
-                </div>
-                {loggedUser.is_superuser && <CodeHighlight>
-                    {JSON.stringify(values, null, 2)}
-                </CodeHighlight>}
+            return <form onSubmit={handleSubmit}>
+                <Page>
+                    <PageHeader controls={controls}>
+                        <Breadcrumbs breadcrumbs={CATEGORIES_BREADCRUMBS} />
+                        {category.id ? category.full_name : 'Add category'}
+                    </PageHeader>
+                </Page>
+                <PageBody>
+                    <div style={{ maxWidth: 600 }}>
+                        <CategoryForm {...props} category={category} />
+                        {loggedUser.is_superuser && <CodeHighlight>
+                            {JSON.stringify(values, null, 2)}
+                        </CodeHighlight>}
+                    </div>
+                </PageBody>
             </form>;
         }}
     </Formik>;
 }
 
-CategoryPageForm.propTypes = {
-    finance: PropTypes.object,
-};
-
-const connectedCategoryPageForm = withRouter(withFinance(CategoryPageForm));
-export { connectedCategoryPageForm as CategoryPageForm };
-
 function Controls({ isSubmitting, deleteCategory }) {
-    const baseClass = 'ui-button ui-button--small';
     return <Fragment>
         {deleteCategory &&
-            <button
-                disabled={isSubmitting ? true : false}
-                onClick={() => deleteCategory()}
-                className={`${baseClass} ui-button--negative`}
-            >Delete</button>
+            <Button
+                disabled={!!isSubmitting} onClick={() => deleteCategory()}
+                classes={['negative', 'small']}
+            >Delete</Button>
         }
         <Link
-            to={`${FINANCE_BASE_URL}/categories`}
-            className={`${baseClass}`}
+            to={CATEGORIES_BASE_URL}
+            className="ui-button ui-button--small"
         >Cancel</Link>
-        <button
-            disabled={isSubmitting ? true : false}
-            type="submit"            
-            className={`${baseClass} ui-button--positive`}
-        >Save</button>
+        <Button
+            disabled={!!isSubmitting} type="submit"
+            classes={['positive', 'small']}
+        >Save</Button>
     </Fragment>;
 }
 

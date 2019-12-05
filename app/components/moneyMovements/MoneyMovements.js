@@ -1,49 +1,50 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
+import { ALink } from 'components/ui/ALink';
+import { Breadcrumbs } from 'components/ui/Breadcrumbs';
+import { Icon } from 'components/ui/Icon';
+import { Page } from 'components/ui/Page';
+import { PageBody } from 'components/ui/PageBody';
 import { PageHeader } from 'components/ui/PageHeader';
+import { Table } from 'components/ui/table/Table';
 
-import { withFinance } from '../../storeConnection';
-import { FINANCE_BASE_URL } from '../../constants';
-import { MoneyMovementsGrid } from './MoneyMovementsGrid';
+import { FINANCE_BREADCRUMBS } from '../../constants';
+import { MONEY_MOVEMENTS_BASE_URL } from './constants';
+import { MoneyMovementsTable } from './MoneyMovementsTable';
 
 
-function MoneyMovements({ finance }) {
+export function MoneyMovements() {
+    const finance = useSelector(state => state.finance);
+    const pageBodyRef = useRef(null);
+
     const controls = <Controls />;
     const moneyMovements = Object.values(finance.moneyMovements)
         .sort((mm1, mm2) => mm1.movement_date > mm2.movement_date ? -1 : 1);
-        
-    return <div style={{ height: '100%' }}>
-        <PageHeader controls={controls}>
-            <Link to={`${FINANCE_BASE_URL}`}
-                className={`ui-page-header ui-page-header__breadcrumb`}
-            >Finance</Link>
+
+    return <Page>
+        <PageHeader controls={controls} scrollRef={pageBodyRef}>
+            <Breadcrumbs breadcrumbs={FINANCE_BREADCRUMBS} />
             Money Movements
         </PageHeader>
-        <div  className="ui-page-body" style={{ height: 'calc(100% - 88px)'}}>                        
-            <MoneyMovementsGrid moneyMovements={moneyMovements} />
-        </div>
-    </div>;
+        <PageBody fullHeight={true} withPageHeader={true} pageBodyRef={pageBodyRef}>
+            <MoneyMovementsTable finance={finance} moneyMovements={moneyMovements} />
+        </PageBody>
+    </Page>;
 }
-
-MoneyMovements.propTypes = {
-    finance: PropTypes.object.isRequired,
-};
-
-const connectedMoneyMovements = withFinance(MoneyMovements);
-export { connectedMoneyMovements as MoneyMovements };
 
 
 function Controls() {
     const baseClass = 'ui-button ui-button--small';
     return <Fragment>
         <Link
-            to={`${FINANCE_BASE_URL}/money-movements/add`}
+            to={`${MONEY_MOVEMENTS_BASE_URL}/add`}
             className={`${baseClass} ui-button--primary`}
         >Add Movement</Link>
         <Link
-            to={`${FINANCE_BASE_URL}/money-movements/add/batch`}
+            to={`${MONEY_MOVEMENTS_BASE_URL}/add/batch`}
             className={`${baseClass} ui-button--primary`}
         >Add Batch</Link>
     </Fragment>;

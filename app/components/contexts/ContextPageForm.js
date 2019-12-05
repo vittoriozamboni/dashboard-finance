@@ -1,24 +1,31 @@
 import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter, Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { Link, useParams, useHistory } from 'react-router-dom';
 import { Formik } from 'formik';
 
-import { getCurrentUser } from 'libs/authentication/utils';
+import { Breadcrumbs } from 'components/ui/Breadcrumbs';
+import { Button } from 'components/ui/Button';
+import { Page } from 'components/ui/Page';
+import { PageBody } from 'components/ui/PageBody';
 import { PageHeader } from 'components/ui/PageHeader';
 import { CodeHighlight } from 'components/style/CodeHighlight';
+import { getCurrentUser } from 'libs/authentication/utils';
 
-import { FINANCE_BASE_URL } from '../../constants';
-import { withFinance } from '../../storeConnection';
+import { CONTEXTS_BREADCRUMBS, CONTEXTS_BASE_URL } from './constants';
 import { ContextEntity, newContext } from '../../models/context';
 import { ContextForm } from './ContextForm';
 
 
-function ContextPageForm({ match, history, finance }) {
-    const { contexts } = finance;    
+export function ContextPageForm() {
+    const finance = useSelector(state => state.finance);
+    const history = useHistory();
+    const { id: paramsId } = useParams();
     const loggedUser = getCurrentUser();
+    const { contexts } = finance;
 
-    const initialContext = match.params && match.params.id
-        ? contexts[+match.params.id] || newContext()
+    const initialContext = paramsId
+        ? contexts[+paramsId] || newContext()
         : newContext();
 
     const [context, setContext] = useState(initialContext);
@@ -31,7 +38,7 @@ function ContextPageForm({ match, history, finance }) {
             contextObj.save(values).then(response => {
                 setContext(response);
                 setSubmitting(false);
-                history.push(`${FINANCE_BASE_URL}/contexts`);
+                history.push(CONTEXTS_BASE_URL);
             });
         }}
     >
@@ -43,7 +50,7 @@ function ContextPageForm({ match, history, finance }) {
                 setSubmitting(true);
                 contextObj.delete(context.id).then(() => {
                     setSubmitting(false);
-                    history.push(`${FINANCE_BASE_URL}/contexts`);
+                    history.push(CONTEXTS_BASE_URL);
                 });
             };
 
@@ -51,50 +58,45 @@ function ContextPageForm({ match, history, finance }) {
                 isSubmitting={isSubmitting}
                 deleteContext={initialContext.id ? deleteContext : null}
             />;
-            return <form onSubmit={handleSubmit}>  
-                <PageHeader controls={controls}>
-                    <Link to={`${FINANCE_BASE_URL}/contexts`}
-                        className={`ui-page-header ui-page-header__breadcrumb`}
-                    >Contexts</Link>
-                    {context.id ? `Edit ${context.full_name}` : 'Add Context'}
-                </PageHeader>
-                <div className='ui-page-body ui-section'>
-                    <ContextForm {...props} context={context} />
-                </div>
-                {loggedUser.is_superuser && <CodeHighlight>
-                    {JSON.stringify(values, null, 2)}
-                </CodeHighlight>}
+            return <form onSubmit={handleSubmit}>
+                <Page>
+                    <PageHeader controls={controls}>
+                        <Breadcrumbs breadcrumbs={CONTEXTS_BREADCRUMBS} />
+                        {context.id ? `Edit ${context.name}` : 'Add Context'}
+                    </PageHeader>
+                    <PageBody>
+                        <div style={{ maxWidth: 600 }}>
+                            <ContextForm {...props} context={context} />
+                            {loggedUser.is_superuser && <CodeHighlight toggle={{ initial: false }}>
+                                {JSON.stringify(values, null, 2)}
+                            </CodeHighlight>}
+                        </div>
+                    </PageBody>
+                </Page>
             </form>;
         }}
     </Formik>;
 }
 
-ContextPageForm.propTypes = {
-    finance: PropTypes.object,
-};
-
-const connectedContextPageForm = withRouter(withFinance(ContextPageForm));
-export { connectedContextPageForm as ContextPageForm };
 
 function Controls({ isSubmitting, deleteContext }) {
-    const baseClass = 'ui-button ui-button--small';
     return <Fragment>
         {deleteContext &&
-            <button
+            <Button
                 disabled={isSubmitting ? true : false}
                 onClick={() => deleteContext()}
-                className={`${baseClass} ui-button--negative`}
-            >Delete</button>
+                classes={['small', 'negative']}
+            >Delete</Button>
         }
         <Link
-            to={`${FINANCE_BASE_URL}/contexts`}
-            className={`${baseClass}`}
+            to={CONTEXTS_BASE_URL}
+            className="ui-button ui-button--small"
         >Cancel</Link>
-        <button
+        <Button
             disabled={isSubmitting ? true : false}
-            type="submit"            
-            className={`${baseClass} ui-button--positive`}
-        >Save</button>
+            type="submit"
+            classes={['small', 'positive']}
+        >Save</Button>
     </Fragment>;
 }
 

@@ -1,37 +1,31 @@
-import React, { Fragment } from 'react';
-import PropTypes from 'prop-types';
+import React, { Fragment, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
+import { Breadcrumbs } from 'components/ui/Breadcrumbs';
+import { PageBody } from 'components/ui/PageBody';
 import { PageHeader } from 'components/ui/PageHeader';
 
-import { FINANCE_BASE_URL } from '../../constants';
-import { withFinance } from '../../storeConnection';
+import { FINANCE_BASE_URL, FINANCE_BREADCRUMBS } from '../../constants';
 import { ContextsTimeline } from './ContextsTimeline';
 
 
-function Contexts({ finance }) {
+export function Contexts() {
+    const pageBodyRef = useRef(null);
+    const finance = useSelector(state => state.finance);
+
     const controls = <Controls />;
 
-    return <div>
-        <PageHeader controls={controls}>
-            <Link to={`${FINANCE_BASE_URL}`}
-                className={`ui-page-header ui-page-header__breadcrumb`}
-            >Finance</Link>
+    return <Fragment>
+        <PageHeader controls={controls} scrollRef={pageBodyRef}>
+        <Breadcrumbs breadcrumbs={FINANCE_BREADCRUMBS} />
             Contexts
         </PageHeader>
-        <div  className="ui-page-body">                        
+        <PageBody fullHeight={true} withPageHeader={true} pageBodyRef={pageBodyRef}>
             <ContextsTimeline contexts={finance.contexts} moneyMovements={finance.moneyMovements} />
-        </div>
-    </div>;
+        </PageBody>
+    </Fragment>;
 }
-
-Contexts.propTypes = {
-    finance: PropTypes.object.isRequired,
-};
-
-const connectedContexts = withFinance(Contexts);
-export { connectedContexts as Contexts };
-
 
 function Controls() {
     const baseClass = 'ui-button ui-button--small';

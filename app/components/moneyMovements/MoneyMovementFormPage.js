@@ -1,26 +1,35 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter, Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import { Formik } from 'formik';
 
 import { getCurrentUser } from 'libs/authentication/utils';
 import { postRequest } from 'libs/requests/requests';
+import { Breadcrumbs } from 'components/ui/Breadcrumbs';
+import { Button } from 'components/ui/Button';
+import { Page } from 'components/ui/Page';
 import { PageHeader } from 'components/ui/PageHeader';
+import { PageBody } from 'components/ui/PageBody';
 import { CodeHighlight } from 'components/style/CodeHighlight';
 
-import { FINANCE_BASE_URL } from '../../constants';
-import { withFinance } from '../../storeConnection';
+import { MONEY_MOVEMENTS_BASE_URL, MONEY_MOVEMENTS_BREADCRUMBS } from './constants';
 import { categoriesEntity } from '../../models/category';
 import { moneyMovementsEntity, newMoneyMovement } from '../../models/moneyMovement';
 import { MoneyMovementForm } from './MoneyMovementForm';
 
 
-function MoneyMovementFormPage({ match, history, finance }) {
+export function MoneyMovementFormPage() {
+    const finance = useSelector(state => state.finance);
+    const history = useHistory();
+    const { id: paramsId } = useParams();
+
+    const pageBodyRef = useRef(null);
     const { moneyMovements } = finance;
     const loggedUser = getCurrentUser();
 
-    const initialMoneyMovement = match.params && match.params.id
-        ? moneyMovements[+match.params.id] || newMoneyMovement()
+    const initialMoneyMovement = paramsId
+        ? moneyMovements[+paramsId] || newMoneyMovement()
         : newMoneyMovement();
     initialMoneyMovement.amount = initialMoneyMovement.amount + '';
     if (!initialMoneyMovement.user) initialMoneyMovement.user = loggedUser.id;
@@ -36,7 +45,7 @@ function MoneyMovementFormPage({ match, history, finance }) {
                 setSubmitting(false);
                 postRequest(`finance/api/category/calculate-totals/`, {}).then(resp => {
                     categoriesEntity.get(response.category).then(() => {
-                        history.push(`${FINANCE_BASE_URL}/money-movements`);
+                        history.push(MONEY_MOVEMENTS_BASE_URL);
                     });
                 });
             }).catch(() => {
@@ -51,7 +60,7 @@ function MoneyMovementFormPage({ match, history, finance }) {
                 setSubmitting(true);
                 moneyMovementsEntity.delete(moneyMovement.id).then(() => {
                     setSubmitting(false);
-                    history.push(`${FINANCE_BASE_URL}/money-movements`);
+                    history.push(MONEY_MOVEMENTS_BASE_URL);
                 });
             };
 
@@ -60,52 +69,39 @@ function MoneyMovementFormPage({ match, history, finance }) {
                 deleteMoneyMovement={initialMoneyMovement.id ? deleteMoneyMovement : null}
             />;
             return <form onSubmit={handleSubmit}>
-                <PageHeader controls={controls}>
-                    <Link to={`${FINANCE_BASE_URL}`}
-                        className={`ui-page-header ui-page-header__breadcrumb`}
-                    >Finance</Link>
-                    <Link to={`${FINANCE_BASE_URL}/money-movements`}
-                        className={`ui-page-header ui-page-header__breadcrumb`}
-                    >Money Movements</Link>
-                    {moneyMovement.id ? `Edit Money Movement` : 'Add Money Movement'}
-                </PageHeader>
-                <div className='ui-page-body ui-section'>
-                    <MoneyMovementForm {...props} moneyMovement={moneyMovement} />
-                </div>
-                {loggedUser.is_superuser && <CodeHighlight>
-                    {JSON.stringify(values, null, 2)}
-                </CodeHighlight>}
+                <Page>
+                    <PageHeader controls={controls} scrollRef={pageBodyRef}>
+                        <Breadcrumbs breadcrumbs={MONEY_MOVEMENTS_BREADCRUMBS} />
+                        {moneyMovement.id ? `Edit Money Movement` : 'Add Money Movement'}
+                    </PageHeader>
+                    <PageBody fullHeight={true} withPageHeader={true} pageBodyRef={pageBodyRef}>
+                        <MoneyMovementForm {...props} moneyMovement={moneyMovement} />
+                        {loggedUser.is_superuser && <CodeHighlight toggle={{ initial: false }}>
+                            {JSON.stringify(values, null, 2)}
+                        </CodeHighlight>}
+                    </PageBody>
+                </Page>
             </form>;
         }}
     </Formik>;
 }
 
-MoneyMovementFormPage.propTypes = {
-    finance: PropTypes.object,
-};
-
-const connectedMoneyMovementFormPage = withRouter(withFinance(MoneyMovementFormPage));
-export { connectedMoneyMovementFormPage as MoneyMovementFormPage };
 
 function Controls({ isSubmitting, deleteMoneyMovement }) {
-    const baseClass = 'ui-button ui-button--small';
     return <Fragment>
         {deleteMoneyMovement &&
-            <button
-                disabled={isSubmitting ? true : false}
+            <Button
+                disabled={!!isSubmitting}
                 onClick={() => deleteMoneyMovement()}
-                className={`${baseClass} ui-button--negative`}
-            >Delete</button>
+                classes={['small', 'negative']}
+            >Delete</Button>
         }
-        <Link
-            to={`${FINANCE_BASE_URL}/money-movements`}
-            className={`${baseClass}`}
-        >Cancel</Link>
-        <button
-            disabled={isSubmitting ? true : false}
+        <Link to={MONEY_MOVEMENTS_BASE_URL} className="ui-button ui-button--small">Cancel</Link>
+        <Button
+            disabled={!!isSubmitting}
             type="submit"
-            className={`${baseClass} ui-button--positive`}
-        >Save</button>
+            classes={['small', 'positive']}
+        >Save</Button>
     </Fragment>;
 }
 

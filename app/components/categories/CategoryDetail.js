@@ -64,27 +64,26 @@ export function CategoryDetail() {
             <MoneyMovementsTable finance={finance} moneyMovements={moneyMovements} />
         </PageBody>
     </Page>;
-
 }
 
 
 function CategoryChart({ finance, moneyMovements }) {
     const previousMonths = FINANCE_PERIODS[finance.selectedPeriod].previousMonths;
-    const monthsData = moneyMovementsByPeriod({ finance, moneyMovements, previousMonths });
+
     const monthChartContainerId = 'finance-home-month-chart-container';
-
-    const data = Object.keys(monthsData).reduce((all, month) => {
-        return [...all, {
-            date: month + '-01',
-            amount: monthsData[month].reduce((tot, m) => tot + parseFloat(m.amount), 0)
-        }];
-    }, []);
-
     useEffect(() => {
-        const chart = am4core.create(monthChartContainerId, am4charts.XYChart);
-        timeHistogram(chart, data);
-    }, [previousMonths, data]);
-
+        const monthsData = moneyMovementsByPeriod({ finance, moneyMovements, previousMonths });
+        const data = Object.keys(monthsData).reduce((all, month) => {
+            return [...all, {
+                date: month + '-01',
+                amount: monthsData[month].reduce((tot, m) => tot + parseFloat(m.amount), 0)
+            }];
+        }, []);
+        setTimeout(() => {
+            const chart = am4core.create(monthChartContainerId, am4charts.XYChart);
+            timeHistogram(chart, data);
+        });
+    }, [previousMonths]);
 
     return <div id={monthChartContainerId} style={{ width: '100%', height: '300px' }}>
         <FullSectionLoader />

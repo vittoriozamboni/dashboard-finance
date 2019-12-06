@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 // import Select from 'react-select';
 import CreatableSelect from 'react-select/creatable';
@@ -9,10 +9,10 @@ import { Textarea } from 'components/ui/form/Textarea';
 import { Select } from 'components/ui/form/Select';
 import { Icon } from 'components/ui/Icon';
 import { Form, Field } from 'components/ui/form/Form';
+import { ColumnBlock, RowBlock } from 'components/ui/Blocks';
 
 import { withFinance } from '../../storeConnection';
 import { UserAssignment } from './forms/UserAssignment';
-import { ColumnBlock, RowBlock } from 'components/ui/Blocks';
 
 
 function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance, addMoneyMovement, cloneMoneyMovement, deleteMoneyMovement, isSubmitting }) {
@@ -69,7 +69,7 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
             <RowBlock className="p-t-10">
                 <ColumnBlock style={{ maxWidth: 315 }}>{/* Basic */}
                     <div className="ui-form-v__field-group">
-                        <Field className="m-r-10" style={{ width: 70 }}>
+                        <Field style={{ width: 70 }}>
                             <Select id="money-movement-movement" value={mmValues.movement || ''}
                                 name={`mm-${batchIndex}-movement`}
                                 classNamePrefix="react-select"
@@ -81,7 +81,7 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                                 placeholder=""
                             />
                         </Field>
-                        <Field className="m-r-10" style={{ maxWidth: 120 }}>
+                        <Field style={{ maxWidth: 120 }}>
                             <Input value={mmValues.amount}
                                 name={`mm-${batchIndex}-amount`}
                                 style={{ textAlign: 'right' }}
@@ -97,7 +97,7 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                                 }}
                             />
                         </Field>
-                        <Field className="m-r-10" style={{ maxWidth: 110 }}>
+                        <Field style={{ maxWidth: 110 }}>
                             <Input value={mmValues.movement_date || ''}
                                 name={`mm-${batchIndex}-movement_date`}
                                 disabled={disableEntry}

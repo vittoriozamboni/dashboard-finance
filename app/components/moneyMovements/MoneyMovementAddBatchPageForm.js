@@ -1,32 +1,34 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter, Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { Formik } from 'formik';
 
-import { getCurrentUser } from 'libs/authentication/utils';
 import { notify } from 'libs/notifications/notifications';
 import { postRequest } from 'libs/requests/requests';
-import { CodeHighlight } from 'components/style/CodeHighlight';
+import { getCurrentUser } from 'libs/authentication/utils';
+
+import { Breadcrumbs } from 'components/ui/Breadcrumbs';
+import { Button } from 'components/ui/Button';
+import { Page } from 'components/ui/Page';
+import { PageBody } from 'components/ui/PageBody';
 import { PageHeader } from 'components/ui/PageHeader';
+import { CodeHighlight } from 'components/style/CodeHighlight';
 
 import { FINANCE_BASE_URL } from '../../constants';
 import { categoriesEntity } from '../../models/category';
 import { moneyMovementsEntity, newMoneyMovement } from '../../models/moneyMovement';
 import { MoneyMovementAddBatchForm } from './MoneyMovementAddBatchForm';
+import { MONEY_MOVEMENTS_BREADCRUMBS, MONEY_MOVEMENTS_BASE_URL } from './constants';
 
 
-function MoneyMovementAddBatchFormPage({ match, history }) {
+export function MoneyMovementAddBatchPageForm() {
+    const history = useHistory();
     const loggedUser = getCurrentUser();
+    const pageBodyRef = useRef(null);
 
     const initialValues = [newMoneyMovement(), newMoneyMovement(), newMoneyMovement()]
-        .map(mm => {
-            mm.user = loggedUser.id;
-            mm.amount = mm.amount + '';
-            return mm;
-        });
-    const initialState = {
-        values: initialValues
-    };
+        .map(mm => ({ ...mm, user: loggedUser.id, amount: mm.amount + '' }));
+    const initialState = { values: initialValues };
 
     const [formState, setFormState] = useState(initialState);
 
@@ -34,18 +36,18 @@ function MoneyMovementAddBatchFormPage({ match, history }) {
         enableReinitialize={true}
         onSubmit={(values, { setSubmitting }) => {
             const promises = [];
-            formState.values.forEach(values => {
+            for (let values of formState.values) {
                 if (values.movement_date) {
                     promises.push(moneyMovementsEntity.save(values));
                 }
-            });
+            };
             if (promises.lenght === 0) {
                 setSubmitting(false);
                 return;
             }
             return Promise.all(promises).then(responses => {
                 const totalMM = formState.values.length;
-                const values = [...formState.values.map((v, index) => !!(responses[index] && responses[index].id) ? null : v)].filter(v => v); 
+                const values = [...formState.values.map((v, index) => !!(responses[index] && responses[index].id) ? null : v)].filter(v => v);
                 setFormState({ ...formState, values });
                 setSubmitting(false);
                 postRequest(`finance/api/category/calculate-totals/`, {}).then(resp => {
@@ -106,50 +108,41 @@ function MoneyMovementAddBatchFormPage({ match, history }) {
                 isSubmitting={isSubmitting}
             />;
             return <form onSubmit={handleSubmit}>
-                <PageHeader controls={controls}>
-                    <Link to={`${FINANCE_BASE_URL}`}
-                        className={`ui-page-header ui-page-header__breadcrumb`}
-                    >Finance</Link>
-                    <Link to={`${FINANCE_BASE_URL}/money-movements`}
-                        className={`ui-page-header ui-page-header__breadcrumb`}
-                    >Money Movements</Link>
-                    Add Batch
-                </PageHeader>
-                <div className='ui-page-body ui-section'>
-                    <MoneyMovementAddBatchForm {...props}
-                        values={values}
-                        setFieldValue={setFieldValue}
-                        addMoneyMovement={addMoneyMovement}
-                        cloneMoneyMovement={cloneMoneyMovement}
-                        deleteMoneyMovement={deleteMoneyMovement}
-                    />
-                </div>
-                {loggedUser.is_superuser && <CodeHighlight>
-                    {JSON.stringify(values, null, 2)}
-                </CodeHighlight>}
+                <Page>
+                    <PageHeader controls={controls} scrollRef={pageBodyRef}>
+                        <Breadcrumbs breadcrumbs={MONEY_MOVEMENTS_BREADCRUMBS} />
+                        Add Batch
+                    </PageHeader>
+                    <PageBody fullHeight={true} withPageHeader={true} pageBodyRef={pageBodyRef}>
+                        <MoneyMovementAddBatchForm {...props}
+                            values={values}
+                            setFieldValue={setFieldValue}
+                            addMoneyMovement={addMoneyMovement}
+                            cloneMoneyMovement={cloneMoneyMovement}
+                            deleteMoneyMovement={deleteMoneyMovement}
+                        />
+                        {loggedUser.is_superuser && <CodeHighlight toggle={{ initial: false }}>
+                            {JSON.stringify(values, null, 2)}
+                        </CodeHighlight>}
+                    </PageBody>
+                </Page>
             </form>;
         }}
     </Formik>;
 }
 
-MoneyMovementAddBatchFormPage.propTypes = {
-};
-
-const connectedMoneyMovementAddBatchFormPage = withRouter(MoneyMovementAddBatchFormPage);
-export { connectedMoneyMovementAddBatchFormPage as MoneyMovementAddBatchFormPage };
 
 function Controls({ isSubmitting }) {
-    const baseClass = 'ui-button ui-button--small';
     return <Fragment>
         <Link
-            to={`${FINANCE_BASE_URL}/money-movements`}
-            className={`${baseClass}`}
+            to={MONEY_MOVEMENTS_BASE_URL}
+            className="ui-button ui-button--small"
         >Cancel</Link>
-        <button
+        <Button
             disabled={isSubmitting ? true : false}
             type="submit"
-            className={`${baseClass} ui-button--positive`}
-        >Save</button>
+            classes={['small', 'positive']}
+        >Save</Button>
     </Fragment>;
 }
 

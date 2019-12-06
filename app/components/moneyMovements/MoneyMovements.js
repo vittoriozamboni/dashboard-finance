@@ -1,15 +1,11 @@
 import React, { Fragment, useRef } from 'react';
-import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
-import { ALink } from 'components/ui/ALink';
 import { Breadcrumbs } from 'components/ui/Breadcrumbs';
-import { Icon } from 'components/ui/Icon';
 import { Page } from 'components/ui/Page';
 import { PageBody } from 'components/ui/PageBody';
 import { PageHeader } from 'components/ui/PageHeader';
-import { Table } from 'components/ui/table/Table';
 
 import { FINANCE_BREADCRUMBS } from '../../constants';
 import { MONEY_MOVEMENTS_BASE_URL } from './constants';

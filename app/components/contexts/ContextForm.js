@@ -2,10 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { CompactPicker } from 'react-color';
 
-import { Form, Field } from 'components/ui/form/Form';
-import { Input } from 'components/ui/form/Input';
-import { Textarea } from 'components/ui/form/Textarea';
-import { IconPicker } from 'components/ui/form/iconPicker/IconPicker';
+import { Form, Field, IconPicker, Input, Textarea } from 'components/ui/form';
+
 
 export function ContextForm({ values, setFieldValue, handleBlur }) {
     const iconName = values.attributes_ui.icon || '';

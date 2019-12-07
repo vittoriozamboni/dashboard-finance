@@ -4,11 +4,8 @@ import PropTypes from 'prop-types';
 import CreatableSelect from 'react-select/creatable';
 
 import { getFormReactSelectStyles } from 'components/style/formReactSelect';
-import { Input } from 'components/ui/form/Input';
-import { Textarea } from 'components/ui/form/Textarea';
-import { Select } from 'components/ui/form/Select';
 import { Icon } from 'components/ui/Icon';
-import { Form, Field } from 'components/ui/form/Form';
+import { Form, Field, Input, Select, Textarea } from 'components/ui/form';
 import { ColumnBlock, RowBlock } from 'components/ui/Blocks';
 
 import { withFinance } from '../../storeConnection';

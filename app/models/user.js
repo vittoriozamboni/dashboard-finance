@@ -19,9 +19,21 @@ export class UserEntity extends BaseEntity {
     fetch (options) {
         return super.fetch({
             fetchActionSet: SET_USERS,
+            mapData: data => data.map(user => {
+                const splittedName = user.full_name.split(' ');
+                const parts = splittedName.length;
+                const initials = [
+                    splittedName[0].substr(0, 1),
+                    parts > 1 ? splittedName[parts - 1].substr(0 , 1) : ''
+                ];
+                return {
+                    ...user,
+                    initials: initials.join('').toUpperCase(),
+                }
+            }),
             ...options
         });
-    }    
+    }
 
     save () {
         throw new Error('User entity is read only');

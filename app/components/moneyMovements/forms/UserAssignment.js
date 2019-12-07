@@ -12,7 +12,7 @@ export function UserAssignment({ users, usersRef, values, addNewUserRel, removeU
     });
 
     const columns = [
-        { prop: 'user', title: 'User' },
+        { prop: 'user', title: 'User', width: 200 },
         { prop: 'amount', title: 'Amount', width: 150 },
         { prop: 'controls', title: '', width: 40 },
     ];

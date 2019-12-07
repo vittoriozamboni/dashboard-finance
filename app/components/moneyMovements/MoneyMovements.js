@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { Breadcrumbs } from 'components/ui/Breadcrumbs';
+import { Button } from 'components/ui/Button';
 import { Page } from 'components/ui/Page';
 import { PageBody } from 'components/ui/PageBody';
 import { PageHeader } from 'components/ui/PageHeader';
@@ -33,15 +34,12 @@ export function MoneyMovements() {
 
 
 function Controls() {
-    const baseClass = 'ui-button ui-button--small';
     return <Fragment>
-        <Link
+        <Button tag={Link} classes={['small']}
             to={`${MONEY_MOVEMENTS_BASE_URL}/add`}
-            className={`${baseClass} ui-button--primary`}
-        >Add Movement</Link>
-        <Link
+        >Add Movement</Button>
+        <Button tag={Link} classes={['small', 'primary']}
             to={`${MONEY_MOVEMENTS_BASE_URL}/add/batch`}
-            className={`${baseClass} ui-button--primary`}
-        >Add Batch</Link>
+        >Add Batch</Button>
     </Fragment>;
 }

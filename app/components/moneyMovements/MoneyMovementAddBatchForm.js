@@ -5,7 +5,7 @@ import CreatableSelect from 'react-select/creatable';
 
 import { getFormReactSelectStyles } from 'components/style/formReactSelect';
 import { Icon } from 'components/ui/Icon';
-import { Form, Field, Input, Select, Textarea } from 'components/ui/form';
+import { Form, HField, VField, Input, Select, Textarea } from 'components/ui/form';
 import { ColumnBlock, RowBlock } from 'components/ui/Blocks';
 
 import { withFinance } from '../../storeConnection';
@@ -14,7 +14,7 @@ import { UserAssignment } from './forms/UserAssignment';
 
 function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance, addMoneyMovement, cloneMoneyMovement, deleteMoneyMovement, isSubmitting }) {
     const [formState, setFormState] = useState({
-        viewAdvancedOptions: { 0 : true },
+        viewAdvancedOptions: {},
     });
 
     const categories = Object.values(finance.categories).sort((c1, c2) => c1.full_name > c2.full_name ? 1 : -1);
@@ -64,9 +64,9 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
             const disableEntry = isSubmitting;
             return <Form key={batchIndex}>
             <RowBlock className="p-t-10">
-                <ColumnBlock style={{ maxWidth: 315 }}>{/* Basic */}
+                <ColumnBlock style={{ maxWidth: 345 }}>{/* Basic */}
                     <div className="ui-form-v__field-group">
-                        <Field style={{ width: 70 }}>
+                        <HField style={{ width: 70, marginRight: 10 }}>
                             <Select id="money-movement-movement" value={mmValues.movement || ''}
                                 name={`mm-${batchIndex}-movement`}
                                 classNamePrefix="react-select"
@@ -77,8 +77,8 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                                 isSearchable={false}
                                 placeholder=""
                             />
-                        </Field>
-                        <Field style={{ maxWidth: 120 }}>
+                        </HField>
+                        <HField style={{ maxWidth: 120, marginRight: 10 }}>
                             <Input value={mmValues.amount}
                                 name={`mm-${batchIndex}-amount`}
                                 style={{ textAlign: 'right' }}
@@ -93,8 +93,8 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                                     handleBlur(e);
                                 }}
                             />
-                        </Field>
-                        <Field style={{ maxWidth: 110 }}>
+                        </HField>
+                        <HField style={{ maxWidth: 110 }}>
                             <Input value={mmValues.movement_date || ''}
                                 name={`mm-${batchIndex}-movement_date`}
                                 disabled={disableEntry}
@@ -102,12 +102,12 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                                 onChange={e => setFieldValue('movement_date', batchIndex, e.target.value)}
                                 onBlur={handleBlur}
                             />
-                        </Field>
+                        </HField>
                     </div>
                 </ColumnBlock>
                 <ColumnBlock>
                     <div className="ui-form-v__field-group">
-                        <Field className="m-r-10" style={{ minWidth: 200, maxWidth: 250 }}>{/* Category */}
+                        <HField style={{ minWidth: 200, maxWidth: 250, marginRight: 10 }}>{/* Category */}
                             <Select
                                 name={`mm-${batchIndex}-category`}
                                 classNamePrefix="react-select"
@@ -118,8 +118,8 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                                 onChange={entry => setFieldValue('category', batchIndex, entry.value)}
                                 options={categories.map(c => ({ value: c.id, label: c.full_name}))}
                             />
-                        </Field>
-                        <Field className="m-r-10" style={{ minWidth: 200, maxWidth: 300 }}>{/* Tags */}
+                        </HField>
+                        <HField style={{ minWidth: 200, maxWidth: 300, marginRight: 10 }}>{/* Tags */}
                             <CreatableSelect
                                 name={`mm-${batchIndex}-tags`}
                                 className="ui-form__react-select"
@@ -132,8 +132,8 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                                 value={mmValues.tags ? mmValues.tags.map(t => ({ value: t, label: t})) : []}
                                 placeholder="Select tags"
                             />
-                        </Field>
-                        <Field className="m-r-10" style={{ maxWidth: '140px' }}>{/* Actions */}
+                        </HField>
+                        <HField style={{ maxWidth: '140px', padding: 0 }}>{/* Actions */}
                             <Icon name="settings" className="ui-icon__control" tabIndex="0" size="smaller"
                                 onClick={() => toggleAdvancedOptions(batchIndex)}
                                 data-control={`mm-${batchIndex}-advanced-options`}
@@ -154,7 +154,7 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                                     data-control={`add-money-movement`}
                                 />
                             }
-                        </Field>
+                        </HField>
                     </div>
                 </ColumnBlock>
                 <ColumnBlock className="col-xs-12">{/* Advanced */}
@@ -162,30 +162,34 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                         <h3 className="primary">Advanced</h3>
                         <RowBlock style={{ margin: 0 }}>
                             <ColumnBlock style={{ paddingLeft: 0, paddingRight: 0 }}>
-                                <Field>
-                                    <Select
-                                        name={`mm-${batchIndex}-context`}
-                                        classNamePrefix="react-select"
-                                        className="ui-form__react-select"
-                                        disabled={disableEntry}
-                                        placeholder="Context"
-                                        value={mmValues.context ? { value: mmValues.context, label: finance.contexts[mmValues.context].name } : null}
-                                        onChange={entry => setFieldValue('context', batchIndex, entry.value)}
-                                        options={contexts.map(c => ({ value: c.id, label: c.name}))}
-                                    />
-                                </Field>
-                                <Field label="Description" vertical={true}>
-                                    <Textarea
-                                        name={`mm-${batchIndex}-description`}
-                                        value={mmValues.description || ''}
-                                        disabled={disableEntry}
-                                        onChange={e => setFieldValue('description', batchIndex, e.target.value)}
-                                        onBlur={handleBlur}
-                                    />
-                                </Field>
+                                <div>
+                                    <HField style={{ width: '100%' }}>
+                                        <Select
+                                            name={`mm-${batchIndex}-context`}
+                                            classNamePrefix="react-select"
+                                            className="ui-form__react-select"
+                                            disabled={disableEntry}
+                                            placeholder="Context"
+                                            value={mmValues.context ? { value: mmValues.context, label: finance.contexts[mmValues.context].name } : null}
+                                            onChange={entry => setFieldValue('context', batchIndex, entry.value)}
+                                            options={contexts.map(c => ({ value: c.id, label: c.name}))}
+                                        />
+                                    </HField>
+                                </div>
+                                <div>
+                                    <VField label="Description">
+                                        <Textarea
+                                            name={`mm-${batchIndex}-description`}
+                                            value={mmValues.description || ''}
+                                            disabled={disableEntry}
+                                            onChange={e => setFieldValue('description', batchIndex, e.target.value)}
+                                            onBlur={handleBlur}
+                                        />
+                                    </VField>
+                                </div>
                             </ColumnBlock>
                             <ColumnBlock>
-                                <Field label="User assignment" vertical={true} style={{ marginTop: 5 }} labelProps={{ style: { paddingLeft: 8 }}} >
+                                <VField label="User assignment" style={{ marginTop: 5 }} labelProps={{ style: { paddingLeft: 8 }}} >
                                     <UserAssignment
                                         namePrefix={`mm-${batchIndex}-`}
                                         users={users}
@@ -197,7 +201,7 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                                         disabled={disableEntry}
                                         mainAmount={mmValues.amount}
                                     />
-                                </Field>
+                                </VField>
                             </ColumnBlock>
                         </RowBlock>
                     </div>

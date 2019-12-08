@@ -40,7 +40,9 @@ export function MoneyMovementsTable({ moneyMovements, finance }) {
             master_total: parseFloat(mm.master_total) ? mm.master_total : '',
             actions: <Fragment>
                 <SidePanel
-                    Trigger={({ setVisible }) => <Icon name="my_library_books" modifiers="clickable" size="small" onClick={() => setVisible(true)} />}
+                    Trigger={({ setVisible, visible }) =>
+                        <Icon name="my_library_books" modifiers="clickable" size="small" onClick={() => setVisible(!visible)} />
+                    }
                     getSidePanelContentProps={({ setVisible }) => {
                         return {
                             title: 'Money Movement Detail',

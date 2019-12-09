@@ -31,10 +31,10 @@ export function MoneyMovementDetail({ moneyMovement }) {
         <RowBlock>
             <ColumnBlock>
                 <Field label="Category">
+                    {category.attributes_ui.icon &&
+                        <Icon name={category.attributes_ui.icon} className="m-r-10" />
+                    }
                     <ALink to={`${FINANCE_BASE_URL}/categories/${category.id}`}>
-                        {category.attributes_ui.icon &&
-                            <Icon name={category.attributes_ui.icon} size="small" />
-                        }
                         {category.name}
                     </ALink>
                 </Field>
@@ -67,7 +67,9 @@ export function MoneyMovementDetail({ moneyMovement }) {
             </Field>
         }
         {loggedUser.is_superuser &&
-            <CodeHighlight toggle={{ initial: false }}>{JSON.stringify(moneyMovement, null, 2)}</CodeHighlight>
+            <div className="m-t-15">
+                <CodeHighlight toggle={{ initial: false }}>{JSON.stringify(moneyMovement, null, 2)}</CodeHighlight>
+            </div>
         }
     </Form>;
 }

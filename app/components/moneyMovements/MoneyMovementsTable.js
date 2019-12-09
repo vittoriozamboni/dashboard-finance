@@ -50,12 +50,9 @@ export function MoneyMovementsTable({ moneyMovements, finance }) {
                             footer: <Fragment>
                                 <div></div>
                                 <div>
-                                    <Link
-                                        to={`${MONEY_MOVEMENTS_BASE_URL}/${mm.id}/edit`}
-                                        className="ui-button ui-button--small"
-                                    >Edit</Link>
+                                    <Button tag={Link} to={`${MONEY_MOVEMENTS_BASE_URL}/${mm.id}/edit`}>Edit</Button>
                                     <Button
-                                        classes={['primary', 'small']}
+                                        classes={['primary']}
                                         style={{ marginLeft: '1rem' }}
                                         onClick={() => setVisible(false)}
                                     >Close</Button>

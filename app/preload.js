@@ -1,5 +1,6 @@
 import { store } from 'store/store';
 import { SET_APPLICATION_LOADING } from 'store/actions';
+import { accountsEntity } from './models/account';
 import { categoriesEntity } from './models/category';
 import { contextsEntity } from './models/context';
 import { moneyMovementsEntity } from './models/moneyMovement';
@@ -13,6 +14,7 @@ export function preload() {
         store.dispatch({ type: SET_APPLICATION_LOADING, loading: true });
 
         const preloadPromises = [
+            accountsEntity.fetch(),
             categoriesEntity.fetch(),
             contextsEntity.fetch(),
             moneyMovementsEntity.fetch(),

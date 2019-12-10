@@ -1,6 +1,15 @@
 // Set the application as initialized
 export const INITIALIZE = 'INITIALIZE';
 
+// Set a list of account
+export const SET_ACCOUNTS = 'SET_ACCOUNTS';
+
+// Set a single account
+export const SET_ACCOUNT = 'SET_ACCOUNT';
+
+// Remove a single account
+export const DELETE_ACCOUNT = 'DELETE_ACCOUNT';
+
 // Set a list of categories
 export const SET_CATEGORIES = 'SET_CATEGORIES';
 

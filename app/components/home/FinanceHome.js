@@ -40,6 +40,14 @@ function FinanceHome({ history }) {
                 <ColumnBlock>
                     <h3>Browse</h3>
                     <BrowseCard
+                        title="Accounts"
+                        description="View all your Accounts"
+                        onClick={() => history.push(`${FINANCE_BASE_URL}/accounts`)}
+                        icon="account_circle"
+                        color="#199473"
+                        width="30%"
+                    />
+                    <BrowseCard
                         title="Categories"
                         description="View all Categories"
                         onClick={() => history.push(`${FINANCE_BASE_URL}/categories`)}

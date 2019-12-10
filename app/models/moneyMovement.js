@@ -56,6 +56,10 @@ export class MoneyMovementEntity extends BaseEntity {
         return super.delete(id, { deleteAction: DELETE_MONEY_MOVEMENT });
     }
 
+    getByAccount(accountId, moneyMovementsList) {
+        return moneyMovementsList.filter(mm => mm.account === accountId);
+    }
+
     getByCategory(categoryId, moneyMovementsList) {
         return moneyMovementsList.filter(mm => mm.category === categoryId);
     }

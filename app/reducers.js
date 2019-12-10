@@ -29,6 +29,7 @@ const updateCategories = (state, categories) => {
 const finance = (currentState, action) => {
     const state = currentState ? currentState : INITIAL_STATE;
 
+    let accounts;
     let categories;
     let contexts;
     let moneyMovements;
@@ -36,6 +37,19 @@ const finance = (currentState, action) => {
     switch (action.type) {
         case actions.INITIALIZE:
             return { ...state, initialized: true };
+
+        case actions.SET_ACCOUNTS:
+            accounts = listToObject(action.data, 'id');
+            return { ...state, accounts };
+        case actions.SET_ACCOUNT:
+            const account = action.data;
+            accounts = { ...state.accounts };
+            accounts[account.id] = account;
+            return { ...state, accounts };
+        case actions.DELETE_ACCOUNT:
+            accounts = { ...state.accounts };
+            if (accounts.hasOwnProperty(action.id)) delete accounts[action.id];
+            return { ...state, accounts };
 
         case actions.SET_CATEGORIES:
             categories = listToObject(action.data, 'id');

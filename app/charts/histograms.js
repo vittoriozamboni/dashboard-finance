@@ -32,7 +32,6 @@ export function histogram(chart, data, propX, propY ) {
 }
 
 export function timeHistogram(chart, data, { propY='amount', propX='date'} = {}) {
-    console.log('DATA', data);
     chart.data = data;
 
     chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";

@@ -16,6 +16,8 @@ import { AccountsLanding } from './components/accounts/AccountsLanding';
 import { CategoriesLanding } from './components/categories/CategoriesLanding';
 import { ContextsLanding } from './components/contexts/ContextsLanding';
 import { MoneyMovementsLanding } from './components/moneyMovements/MoneyMovementsLanding';
+import { TransactionsLanding } from './components/transactions/TransactionsLanding';
+import { VendorsLanding } from './components/vendors/VendorsLanding';
 
 export { FINANCE_BASE_URL };
 
@@ -47,6 +49,8 @@ function FinanceLanding({ finance }) {
         <Route path={`${FINANCE_BASE_URL}/categories`} component={CategoriesLanding} />
         <Route path={`${FINANCE_BASE_URL}/contexts`} component={ContextsLanding} />
         <Route path={`${FINANCE_BASE_URL}/money-movements`} component={MoneyMovementsLanding} />
+        <Route path={`${FINANCE_BASE_URL}/transactions`} component={TransactionsLanding} />
+        <Route path={`${FINANCE_BASE_URL}/vendors`} component={VendorsLanding} />
     </Switch>;
 }
 

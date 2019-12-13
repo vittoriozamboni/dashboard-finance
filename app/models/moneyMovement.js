@@ -19,6 +19,7 @@ export function newMoneyMovement() {
         master: null,
         master_total: 0,
         incomplete_total: false,
+        vendor: null,
     };
 }
 
@@ -70,6 +71,10 @@ export class MoneyMovementEntity extends BaseEntity {
 
     getByContext(contextId, moneyMovementsList) {
         return moneyMovementsList.filter(mm => mm.context === contextId);
+    }
+
+    getByVendor(vendorId, moneyMovementsList) {
+        return moneyMovementsList.filter(mm => mm.vendor === vendorId);
     }
 }
 

@@ -71,6 +71,22 @@ function FinanceHome({ history }) {
                         color="#dcaf67"
                         width="30%"
                     />
+                    <BrowseCard
+                        title="Transactions"
+                        description="View Transactions"
+                        onClick={() => history.push(`${FINANCE_BASE_URL}/transactions`)}
+                        icon="import_export"
+                        color="#dcaf67"
+                        width="30%"
+                    />
+                    <BrowseCard
+                        title="Vendors"
+                        description="View Vendors"
+                        onClick={() => history.push(`${FINANCE_BASE_URL}/vendors`)}
+                        icon="people_alt"
+                        color="#dcaf67"
+                        width="30%"
+                    />
                 </ColumnBlock>
             </RowBlock>
         </PageBody>

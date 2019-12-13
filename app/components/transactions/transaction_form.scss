@@ -1,0 +1,22 @@
+@import '~@vzamboni/dashboard-ui-style/vars/colors';
+
+.finance__transaction-form__category-selector {
+    background-color: $grey-light;
+    color: $grey-d2;
+    border-radius: 50%;
+    font-size: 13px;
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+    box-sizing: border-box;
+    padding-top: 2px;
+}
+
+.finance__transaction-form__category-selector--active {
+    background-color: $primary;
+    color: white;
+}

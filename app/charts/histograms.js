@@ -32,17 +32,21 @@ export function histogram(chart, data, propX, propY ) {
 }
 
 export function timeHistogram(chart, data, { propY='amount', propX='date'} = {}) {
+    console.log('DATA', data);
     chart.data = data;
 
-    chart.dateFormatter.inputDateFormat = "YYYY-MM-yy";
+    chart.dateFormatter.inputDateFormat = "yyyy-MM-dd";
     chart.zoomOutButton.disabled = true;
 
     let dateAxis = chart.xAxes.push(new am4charts.DateAxis());
     dateAxis.renderer.grid.template.strokeOpacity = 0;
-    dateAxis.renderer.minGridDistance = 5;
-    dateAxis.dateFormats.setKey("day", "d");
-    dateAxis.tooltip.hiddenState.properties.opacity = 1;
-    dateAxis.tooltip.hiddenState.properties.visible = true;
+    dateAxis.renderer.minGridDistance = 20;
+    dateAxis.periodChangeDateFormats.setKey("month", "[bold]yyyy[/]");
+    dateAxis.dateFormats.setKey("month", "[font-size: 12px]MMM");
+    dateAxis.baseInterval = {
+        "timeUnit": "month",
+        "count": 1
+    }
 
     let valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
     valueAxis.renderer.inside = true;
@@ -58,7 +62,7 @@ export function timeHistogram(chart, data, { propY='amount', propX='date'} = {})
     series.tooltipText = "{valueY.value}";
     series.tooltip.pointerOrientation = "vertical";
     series.tooltip.hiddenState.properties.opacity = 1;
-    series.tooltip.hiddenState.properties.visible = true;
+    series.tooltip.hiddenState.properties.visible = false;
 
     let columnTemplate = series.columns.template;
     columnTemplate.width = 30;

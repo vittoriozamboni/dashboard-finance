@@ -9,13 +9,16 @@ const savedState = getSavedState();
 
 const INITIAL_STATE = {
     initialized: false,
+    accounts: {},
     categories: {},
     contexts: {},
     categoriesTree: [],
     subCategoriesTree: {},
     moneyMovements: {},
     tags: {},
+    transactions: {},
     users: {},
+    vendors: {},
     selectedPeriod: savedState.selectedPeriod || FINANCE_PERIODS_DEFAULT,
 };
 
@@ -34,6 +37,8 @@ const finance = (currentState, action) => {
     let contexts;
     let moneyMovements;
     let tags;
+    let transactions;
+    let vendors;
     switch (action.type) {
         case actions.INITIALIZE:
             return { ...state, initialized: true };
@@ -101,6 +106,31 @@ const finance = (currentState, action) => {
             tags = { ...state.tags };
             if (tags.hasOwnProperty(action.id)) delete tags[action.id];
             return { ...state, tags };
+
+        case actions.SET_TRANSACTIONS:
+            return { ...state, transactions: listToObject(action.data, 'id') };
+        case actions.SET_TRANSACTION:
+            const transaction = action.data;
+            transactions = { ...state.transactions };
+            transactions[transaction.id] = transaction;
+            return { ...state, transactions };
+        case actions.DELETE_TRANSACTION:
+            transactions = { ...state.transaction };
+            if (transactions.hasOwnProperty(action.id)) delete transactions[action.id];
+            return { ...state, transactions };
+
+        case actions.SET_VENDORS:
+            vendors = listToObject(action.data, 'id');
+            return { ...state, vendors };
+        case actions.SET_VENDOR:
+            const vendor = action.data;
+            vendors = { ...state.vendors };
+            vendors[vendor.id] = vendor;
+            return { ...state, vendors };
+        case actions.DELETE_VENDOR:
+            vendors = { ...state.vendors };
+            if (vendors.hasOwnProperty(action.id)) delete vendors[action.id];
+            return { ...state, vendors };
 
         case actions.SET_USERS:
             const users = listToObject(action.data, 'id');

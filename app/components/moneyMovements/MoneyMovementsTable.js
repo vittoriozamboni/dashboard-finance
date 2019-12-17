@@ -13,6 +13,7 @@ import { CATEGORIES_BASE_URL } from '../categories/constants';
 import { MONEY_MOVEMENTS_BASE_URL } from '../moneyMovements/constants';
 import { MoneyMovementDetail } from './MoneyMovementDetail';
 import { Badge } from 'components/ui/Badge';
+import { TRANSACTIONS_BASE_URL } from '../transactions/constants';
 
 
 export function MoneyMovementsTable({ moneyMovements, finance }) {
@@ -25,7 +26,6 @@ export function MoneyMovementsTable({ moneyMovements, finance }) {
         { prop: 'amount', title: 'Amount', width: 100, style: numberStyle },
         { prop: 'movement_date', title: 'Date', width: 120 },
         { prop: 'category', title: 'Category', width: 200, },
-        { prop: 'master_total', title: 'Total', width: 100, style: numberStyle },
         { prop: 'description', title: 'Description' },
         { prop: 'tags', title: 'Tags', width: 200 },
         { prop: 'id', title: 'ID', width: 40 },
@@ -40,8 +40,8 @@ export function MoneyMovementsTable({ moneyMovements, finance }) {
                 <Badge type="circular">{finance.accounts[mm.account].short_name}</Badge>
             </ALink>,
             category: <ALink to={`${CATEGORIES_BASE_URL}/${mm.category}`}>{finance.categories[mm.category].full_name}</ALink>,
+            transaction: <ALink to={`${TRANSACTIONS_BASE_URL}/${mm.transaction}`}>{mm.transaction}</ALink>,
             movement_icon: mm.movement === '-' ? <Icon name="arrow_downward" className="red" size="small" /> : <Icon name="arrow_upward" className="teal" size="small" />,
-            master_total: parseFloat(mm.master_total) ? mm.master_total : '',
             actions: <Fragment>
                 <SidePanel
                     Trigger={({ setVisible, visible }) =>

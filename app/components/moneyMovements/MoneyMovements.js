@@ -17,12 +17,11 @@ export function MoneyMovements() {
     const finance = useSelector(state => state.finance);
     const pageBodyRef = useRef(null);
 
-    const controls = <Controls />;
     const moneyMovements = Object.values(finance.moneyMovements)
         .sort((mm1, mm2) => mm1.movement_date > mm2.movement_date ? -1 : 1);
 
     return <Page>
-        <PageHeader controls={controls} scrollRef={pageBodyRef}>
+        <PageHeader scrollRef={pageBodyRef}>
             <Breadcrumbs breadcrumbs={FINANCE_BREADCRUMBS} />
             Money Movements
         </PageHeader>
@@ -30,16 +29,4 @@ export function MoneyMovements() {
             <MoneyMovementsTable finance={finance} moneyMovements={moneyMovements} />
         </PageBody>
     </Page>;
-}
-
-
-function Controls() {
-    return <Fragment>
-        <Button tag={Link} classes={['small']}
-            to={`${MONEY_MOVEMENTS_BASE_URL}/add`}
-        >Add Movement</Button>
-        <Button tag={Link} classes={['small', 'primary']}
-            to={`${MONEY_MOVEMENTS_BASE_URL}/add/batch`}
-        >Add Batch</Button>
-    </Fragment>;
 }

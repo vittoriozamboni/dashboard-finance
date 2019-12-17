@@ -16,9 +16,6 @@ export function newMoneyMovement() {
         user: null,
         other_users: [],
         one_time: false,
-        master: null,
-        master_total: 0,
-        incomplete_total: false,
         vendor: null,
     };
 }

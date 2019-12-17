@@ -44,7 +44,7 @@ export function TransactionsTable({ transactions, finance }) {
                     }
                     getSidePanelContentProps={({ setVisible }) => {
                         return {
-                            title: 'Transaction Detail',
+                            title: <h3 className="primary">Transaction Detail</h3>,
                             content: <TransactionDetail transaction={tr} />,
                             footer: <Fragment>
                                 <div></div>

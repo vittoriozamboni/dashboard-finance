@@ -15,7 +15,6 @@ import { PageBody } from 'components/ui/PageBody';
 import { PageHeader } from 'components/ui/PageHeader';
 import { CodeHighlight } from 'components/style/CodeHighlight';
 
-import { FINANCE_BASE_URL } from '../../constants';
 import { categoriesEntity } from '../../models/category';
 import { transactionsEntity, newTransaction } from '../../models/transaction';
 import { TransactionAddBatchForm } from './TransactionAddBatchForm';

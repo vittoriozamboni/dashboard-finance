@@ -19,7 +19,7 @@ export function MoneyMovementDetail({ moneyMovement }) {
     const category = finance.categories[moneyMovement.category];
     const context = moneyMovement.context && finance.contexts[moneyMovement.context];
 
-    return <Form>
+    return <Form style={{ overflowX: 'hidden' }}>
         <RowBlock>
             <ColumnBlock>
                 <Field label="Amount">{moneyMovement.movement}{moneyMovement.amount}</Field>

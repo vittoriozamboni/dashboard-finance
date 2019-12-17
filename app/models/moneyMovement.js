@@ -19,6 +19,7 @@ export function newMoneyMovement() {
         master: null,
         master_total: 0,
         incomplete_total: false,
+        vendor: null,
     };
 }
 
@@ -56,6 +57,10 @@ export class MoneyMovementEntity extends BaseEntity {
         return super.delete(id, { deleteAction: DELETE_MONEY_MOVEMENT });
     }
 
+    getByAccount(accountId, moneyMovementsList) {
+        return moneyMovementsList.filter(mm => mm.account === accountId);
+    }
+
     getByCategory(categoryId, moneyMovementsList) {
         return moneyMovementsList.filter(mm => mm.category === categoryId);
     }
@@ -66,6 +71,10 @@ export class MoneyMovementEntity extends BaseEntity {
 
     getByContext(contextId, moneyMovementsList) {
         return moneyMovementsList.filter(mm => mm.context === contextId);
+    }
+
+    getByVendor(vendorId, moneyMovementsList) {
+        return moneyMovementsList.filter(mm => mm.vendor === vendorId);
     }
 }
 

@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
@@ -11,7 +12,7 @@ import { PageBody } from 'components/ui/PageBody';
 import { PageHeader } from 'components/ui/PageHeader';
 import { Table } from 'components/ui/table/Table';
 
-import { FINANCE_BASE_URL, FINANCE_BREADCRUMBS } from '../../constants';
+import { FINANCE_BREADCRUMBS } from '../../constants';
 import { withFinance } from '../../storeConnection';
 import { CATEGORIES_BASE_URL } from './constants';
 import { categoriesYearPie } from '../../charts/categoriesYearPie';
@@ -19,8 +20,9 @@ import { FullSectionLoader } from 'components/ui/Loader';
 import { PeriodSelector } from '../shared/PeriodSelector';
 
 
-function Categories({ finance }) {
+export function Categories() {
     const pageBodyRef = useRef(null);
+    const finance = useSelector(state => state.finance);
     const { categoriesTree } = finance;
 
     const controls = <Controls />;
@@ -37,19 +39,13 @@ function Categories({ finance }) {
     </Fragment>;
 }
 
-Categories.propTypes = {
-    finance: PropTypes.object,
-};
-
-const connectedCategories = withFinance(Categories);
-export { connectedCategories as Categories };
 
 function Controls() {
     const baseClass = 'ui-button ui-button--small';
     return <Fragment>
         <PeriodSelector />
         <Link
-            to={`${FINANCE_BASE_URL}/categories/add`}
+            to={`${CATEGORIES_BASE_URL}/add`}
             className={`${baseClass} ui-button--primary`}
         >Add Category</Link>
     </Fragment>;

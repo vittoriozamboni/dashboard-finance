@@ -5,13 +5,14 @@ import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 
 import { Breadcrumbs } from 'components/ui/Breadcrumbs';
+import { Button } from 'components/ui/Button';
 import { FullSectionLoader } from 'components/ui/Loader';
 import { Page } from 'components/ui/Page';
 import { PageBody } from 'components/ui/PageBody';
 import { PageHeader } from 'components/ui/PageHeader';
 
 import { FINANCE_PERIODS } from '../../constants';
-import { CATEGORIES_BREADCRUMBS, CATEGORIES_BASE_URL } from './constants';
+import { VENDORS_BREADCRUMBS, VENDORS_BASE_URL } from './constants';
 import { MoneyMovementEntity } from '../../models/moneyMovement';
 
 import { MoneyMovementsTable } from '../moneyMovements/MoneyMovementsTable';
@@ -19,7 +20,8 @@ import { moneyMovementsByPeriod } from '../../data/moneyMovementsDataUtils';
 import { timeHistogram } from '../../charts/histograms';
 import { PeriodSelector } from '../shared/PeriodSelector';
 
-export function CategoryDetail() {
+
+export function VendorDetail() {
     const finance = useSelector(state => state.finance);
     const { id: paramsId } = useParams();
 
@@ -28,17 +30,17 @@ export function CategoryDetail() {
 
     const initialMovements = finance.moneyMovements;
 
-    const category = finance.categories[+paramsId];
+    const vendor = finance.vendors[+paramsId];
 
     useEffect(() => {
         const mmEntity = new MoneyMovementEntity();
-        const categoriesId = [category.id, ...finance.subCategoriesTree[category.id] || []];
+        const vendorId = vendor.id;
         if (Object.keys(initialMovements).length === 0) {
             mmEntity.fetch().then(loadedMoneyMovements => {
-                setMoneyMovements(mmEntity.getByCategories(categoriesId, loadedMoneyMovements));
+                setMoneyMovements(mmEntity.getByVendor(vendorId, loadedMoneyMovements));
             });
         } else {
-            setMoneyMovements(mmEntity.getByCategories(categoriesId, Object.values(initialMovements)));
+            setMoneyMovements(mmEntity.getByVendor(vendorId, Object.values(initialMovements)));
         }
     }, []); // eslint-disable-line
 
@@ -48,29 +50,29 @@ export function CategoryDetail() {
 
     const controls = <Fragment>
         <PeriodSelector />
-        <Link
-            to={`${CATEGORIES_BASE_URL}/${category.id}/edit`}
-            className="ui-button ui-button--primary ui-button--small"
-        >Edit</Link>
+        <Button tag={Link}
+            to={`${VENDORS_BASE_URL}/${vendor.id}/edit`}
+            classes={['primary']}
+        >Edit</Button>
     </Fragment>;
 
     return <Page>
         <PageHeader controls={controls} scrollRef={pageBodyRef}>
-            <Breadcrumbs breadcrumbs={CATEGORIES_BREADCRUMBS} />
-            {category.full_name}
+            <Breadcrumbs breadcrumbs={VENDORS_BREADCRUMBS} />
+            {vendor.name}
         </PageHeader>
         <PageBody fullHeight={true} withPageHeader={true} pageBodyRef={pageBodyRef}>
-            <CategoryChart finance={finance} moneyMovements={moneyMovements} />
+            <VendorChart finance={finance} moneyMovements={moneyMovements} />
             <MoneyMovementsTable finance={finance} moneyMovements={moneyMovements} />
         </PageBody>
     </Page>;
 }
 
 
-function CategoryChart({ finance, moneyMovements }) {
+function VendorChart({ finance, moneyMovements }) {
     const previousMonths = FINANCE_PERIODS[finance.selectedPeriod].previousMonths;
 
-    const monthChartContainerId = 'finance-home-month-chart-container';
+    const monthChartContainerId = 'finance-vendor-detail-chart-container';
     useEffect(() => {
         const monthsData = moneyMovementsByPeriod({ finance, moneyMovements, previousMonths });
         const data = Object.keys(monthsData).reduce((all, month) => {
@@ -81,7 +83,10 @@ function CategoryChart({ finance, moneyMovements }) {
         }, []);
         setTimeout(() => {
             const chart = am4core.create(monthChartContainerId, am4charts.XYChart);
-            timeHistogram(chart, data);
+            // timeHistogram(chart, data);
+            timeHistogram(chart, Object.values(monthsData)
+                .reduce((all, month) => [...all, ...month], [])
+                .map(mm => ({ date: mm.movement_date, amount: mm.amount })));
         });
     }, [previousMonths]);
 

@@ -1,49 +1,32 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-// import Select from 'react-select';
-import CreatableSelect from 'react-select/creatable';
 
 import { getFormReactSelectStyles } from 'components/style/formReactSelect';
-import { Icon } from 'components/ui/Icon';
+import { Icon, IconControl } from 'components/ui/Icon';
 import { Form, HField, VField, Input, Select, Textarea } from 'components/ui/form';
 import { ColumnBlock, RowBlock } from 'components/ui/Blocks';
 
 import { withFinance } from '../../storeConnection';
-import { UserAssignment } from './forms/UserAssignment';
+import { InlineLoader } from 'components/ui/Loader';
 
 
-function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance, addMoneyMovement, cloneMoneyMovement, deleteMoneyMovement, isSubmitting }) {
+function getAccountLabel(finance, accId) {
+    return finance.accounts[accId].short_name + ' - ' + finance.accounts[accId].name;
+}
+
+function TransactionAddBatchForm({ values, setFieldValue, handleBlur, finance, addTransaction, cloneTransaction, deleteTransaction, isSubmitting, fullFormState }) {
     const [formState, setFormState] = useState({
         viewAdvancedOptions: {},
     });
 
     const categories = Object.values(finance.categories).sort((c1, c2) => c1.full_name > c2.full_name ? 1 : -1);
     const contexts = Object.values(finance.contexts).sort((c1, c2) => c1.start_date > c2.start_date ? -1 : 1);
-    const tags = Object.values(finance.tags).map(t => t.name).sort();
-    const users = Object.values(finance.users).sort((u1, u2) => u1.full_name > u2.full_name ? 1 : -1);
-
-    const addNewUserRel = (batchIndex, newUserRel) => {
-        if (newUserRel.user && newUserRel.amount) {
-            setFieldValue('other_users', batchIndex, [...values[batchIndex].other_users, { ...newUserRel }]);
-        }
-    };
-
-    const setUserAmount = (batchIndex, amount, index) => {
-        setFieldValue('other_users',
-            batchIndex, values[batchIndex].other_users.map((ur, urIndex) => {
-                return urIndex === index ? { ...ur, amount } : ur;
-            })
-        );
-    };
-
-    const removeUserRel = (batchIndex, index) => {
-        setFieldValue('other_users', batchIndex,
-            values[batchIndex].other_users.filter((ur, urIndex) => index !== urIndex)
-        );
-    };
+    const tags = Object.values(finance.tags).map(t => t.name).sort().map(t => ({ value: t, label: t }));
+    const accounts = Object.values(finance.accounts).sort((a1, a2) => a1.name > a2.name ? 1 : -1);
+    const vendors = Object.values(finance.vendors).sort((v1, v2) => v1.name > v2.name ? 1 : -1);
 
     const onMultiSelectChange = (options, action, batchIndex, fieldName) => {
-        const newValues = options.map(o => o.value);
+        const newValues = options ? options.map(o => o.value) : [];
 
         setFieldValue(fieldName, batchIndex, newValues);
     };
@@ -60,17 +43,26 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
     const { viewAdvancedOptions } = formState;
 
     return <div style={{ width: '100%' }}>
-        {values.map((mmValues, batchIndex) => {
-            const disableEntry = isSubmitting;
+        {values.map((transactionValues, batchIndex) => {
+            const disableEntry = isSubmitting || fullFormState.saving[batchIndex] || fullFormState.saved[batchIndex];
+
             return <Form key={batchIndex}>
             <RowBlock className="p-t-10">
-                <ColumnBlock style={{ maxWidth: 345 }}>{/* Basic */}
+                <ColumnBlock style={{ maxWidth: 560 }}>{/* Basic */}
                     <div className="ui-form-v__field-group">
+                        <HField style={{ minWidth: 200, maxWidth: 250, marginRight: 10 }}>{/* Category */}
+                            <Select
+                                name={`tr-${batchIndex}-account`}
+                                disabled={disableEntry}
+                                placeholder="Account"
+                                value={transactionValues.account}
+                                onChange={entry => setFieldValue('account', batchIndex, entry.value)}
+                                options={accounts.map(a => ({ value: a.id, label: getAccountLabel(finance, a.id)}))}
+                            />
+                        </HField>
                         <HField style={{ width: 70, marginRight: 10 }}>
-                            <Select id="money-movement-movement" value={mmValues.movement || ''}
-                                name={`mm-${batchIndex}-movement`}
-                                classNamePrefix="react-select"
-                                className="ui-form__react-select"
+                            <Select id="transaction-movement" value={transactionValues.movement || ''}
+                                name={`tr-${batchIndex}-movement`}
                                 disabled={disableEntry}
                                 options={[{value: '-', label: '-' }, { value: '+', label: '+' }]}
                                 onChange={e => setFieldValue('movement', batchIndex, e.value)}
@@ -79,8 +71,8 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                             />
                         </HField>
                         <HField style={{ maxWidth: 120, marginRight: 10 }}>
-                            <Input value={mmValues.amount}
-                                name={`mm-${batchIndex}-amount`}
+                            <Input value={transactionValues.amount}
+                                name={`tr-${batchIndex}-amount`}
                                 style={{ textAlign: 'right' }}
                                 disabled={disableEntry}
                                 placeholder="Amount"
@@ -95,8 +87,8 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                             />
                         </HField>
                         <HField style={{ maxWidth: 110 }}>
-                            <Input value={mmValues.movement_date || ''}
-                                name={`mm-${batchIndex}-movement_date`}
+                            <Input value={transactionValues.movement_date || ''}
+                                name={`tr-${batchIndex}-movement_date`}
                                 disabled={disableEntry}
                                 placeholder="YYYY-MM-DD"
                                 onChange={e => setFieldValue('movement_date', batchIndex, e.target.value)}
@@ -109,49 +101,47 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                     <div className="ui-form-v__field-group">
                         <HField style={{ minWidth: 200, maxWidth: 250, marginRight: 10 }}>{/* Category */}
                             <Select
-                                name={`mm-${batchIndex}-category`}
-                                classNamePrefix="react-select"
-                                className="ui-form__react-select"
+                                name={`tr-${batchIndex}-category`}
                                 disabled={disableEntry}
                                 placeholder="Category"
-                                value={mmValues.category ? { value: mmValues.category, label: finance.categories[mmValues.category].full_name } : null}
+                                value={transactionValues.category}
                                 onChange={entry => setFieldValue('category', batchIndex, entry.value)}
                                 options={categories.map(c => ({ value: c.id, label: c.full_name}))}
                             />
                         </HField>
-                        <HField style={{ minWidth: 200, maxWidth: 300, marginRight: 10 }}>{/* Tags */}
-                            <CreatableSelect
-                                name={`mm-${batchIndex}-tags`}
-                                className="ui-form__react-select"
-                                classNamePrefix="react-select"
-                                styles={formReactSelectStyles}
-                                isMulti={true}
-                                isDisabled={disableEntry}
-                                options={tags.map(tag => ({ value: tag, label: tag }))}
-                                onChange={(options, action) => onMultiSelectChange(options, action, batchIndex, 'tags')}
-                                value={mmValues.tags ? mmValues.tags.map(t => ({ value: t, label: t})) : []}
-                                placeholder="Select tags"
+                        <HField style={{ minWidth: 200, maxWidth: 250, marginRight: 10 }}>{/* Category */}
+                            <Select
+                                name={`tr-${batchIndex}-vendor`}
+                                disabled={disableEntry}
+                                placeholder="Vendor"
+                                value={transactionValues.vendor}
+                                onChange={entry => setFieldValue('vendor', batchIndex, entry.value)}
+                                options={vendors.map(v => ({ value: v.id, label: v.name }))}
                             />
                         </HField>
                         <HField style={{ maxWidth: '140px', padding: 0 }}>{/* Actions */}
-                            <Icon name="settings" className="ui-icon__control" tabIndex="0" size="smaller"
+                            <IconControl name="settings" tabIndex="0"
                                 onClick={() => toggleAdvancedOptions(batchIndex)}
-                                data-control={`mm-${batchIndex}-advanced-options`}
+                                data-control={`tr-${batchIndex}-advanced-options`}
                             />
-                            <Icon name="content_copy" category="far" className="ui-icon__control" tabIndex="0" size="smaller"
-                                onClick={() => cloneMoneyMovement(batchIndex)}
-                                data-control={`mm-${batchIndex}-copy`}
+                            <IconControl name="content_copy" tabIndex="0"
+                                onClick={() => cloneTransaction(batchIndex)}
+                                data-control={`tr-${batchIndex}-copy`}
                             />
                             {values.length > 1 &&
-                                <Icon name="delete" className="ui-icon__control" tabIndex="0" size="smaller"
-                                    onClick={() => deleteMoneyMovement(batchIndex)}
-                                    data-control={`mm-${batchIndex}-copy`}
+                                <IconControl name="delete" tabIndex="0"
+                                    onClick={() => !disableEntry && deleteTransaction(batchIndex)}
+                                    data-control={`tr-${batchIndex}-copy`}
                                 />
                             }
-                            {batchIndex === values.length - 1 &&
-                                <Icon name="add" className="ui-icon__control" tabIndex="0" size="smaller"
-                                    onClick={() => addMoneyMovement()}
-                                    data-control={`add-money-movement`}
+                            {isSubmitting && fullFormState.saving[batchIndex] && <InlineLoader />}
+                            {fullFormState.saved[batchIndex] &&
+                                <Icon name="check" size="smaller" className="teal-l1" />
+                            }
+                            {!isSubmitting && batchIndex === values.length - 1 &&
+                                <IconControl name="add" tabIndex="0"
+                                    onClick={() => addTransaction()}
+                                    data-control={`add-transaction`}
                                 />
                             }
                         </HField>
@@ -165,12 +155,10 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                                 <div>
                                     <HField style={{ width: '100%' }}>
                                         <Select
-                                            name={`mm-${batchIndex}-context`}
-                                            classNamePrefix="react-select"
-                                            className="ui-form__react-select"
+                                            name={`tr-${batchIndex}-context`}
                                             disabled={disableEntry}
                                             placeholder="Context"
-                                            value={mmValues.context ? { value: mmValues.context, label: finance.contexts[mmValues.context].name } : null}
+                                            value={transactionValues.context}
                                             onChange={entry => setFieldValue('context', batchIndex, entry.value)}
                                             options={contexts.map(c => ({ value: c.id, label: c.name}))}
                                         />
@@ -179,8 +167,8 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                                 <div>
                                     <VField label="Description">
                                         <Textarea
-                                            name={`mm-${batchIndex}-description`}
-                                            value={mmValues.description || ''}
+                                            name={`tr-${batchIndex}-description`}
+                                            value={transactionValues.description || ''}
                                             disabled={disableEntry}
                                             onChange={e => setFieldValue('description', batchIndex, e.target.value)}
                                             onBlur={handleBlur}
@@ -189,19 +177,18 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
                                 </div>
                             </ColumnBlock>
                             <ColumnBlock>
-                                <VField label="User assignment" style={{ marginTop: 5 }} labelProps={{ style: { paddingLeft: 8 }}} >
-                                    <UserAssignment
-                                        namePrefix={`mm-${batchIndex}-`}
-                                        users={users}
-                                        usersRef={finance.users}
-                                        values={mmValues}
-                                        addNewUserRel={(newUserRel) => addNewUserRel(batchIndex, newUserRel)}
-                                        removeUserRel={(index) => removeUserRel(batchIndex, index)}
-                                        setUserAmount={(index, amount) => setUserAmount(batchIndex, index, amount)}
-                                        disabled={disableEntry}
-                                        mainAmount={mmValues.amount}
+                                <HField style={{ minWidth: 200, maxWidth: 300, marginRight: 10 }}>{/* Tags */}
+                                    <Select
+                                        creatable={true}
+                                        name={`tr-${batchIndex}-tags`}
+                                        isMulti={true}
+                                        isDisabled={disableEntry}
+                                        options={tags}
+                                        onChange={(options, action) => onMultiSelectChange(options, action, batchIndex, 'tags')}
+                                        value={transactionValues.tags}
+                                        placeholder="Select tags"
                                     />
-                                </VField>
+                                </HField>
                             </ColumnBlock>
                         </RowBlock>
                     </div>
@@ -214,17 +201,18 @@ function MoneyMovementAddBatchForm({ values, setFieldValue, handleBlur, finance,
     </div>;
 }
 
-MoneyMovementAddBatchForm.propTypes = {
+TransactionAddBatchForm.propTypes = {
     values: PropTypes.arrayOf(PropTypes.object),
     setFieldValue: PropTypes.func,
-    addMoneyMovement: PropTypes.func,
-    cloneMoneyMovement: PropTypes.func,
-    deleteMoneyMovement: PropTypes.func,
+    addTransaction: PropTypes.func,
+    cloneTransaction: PropTypes.func,
+    deleteTransaction: PropTypes.func,
     handleBlur: PropTypes.func,
     finance: PropTypes.object,
     isSubmitting: PropTypes.bool,
+    fullFormState: PropTypes.object,
 };
 
-const connectedMoneyMovementAddBatchForm = withFinance(MoneyMovementAddBatchForm);
-export { connectedMoneyMovementAddBatchForm as MoneyMovementAddBatchForm };
+const connectedTransactionAddBatchForm = withFinance(TransactionAddBatchForm);
+export { connectedTransactionAddBatchForm as TransactionAddBatchForm };
 

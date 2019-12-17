@@ -4,29 +4,28 @@ import PropTypes from 'prop-types';
 import { Icon } from 'components/ui/Icon';
 import { Table } from 'components/ui/table/Table';
 import { Input } from 'components/ui/form/Input';
-import { Select } from 'components/ui/form/Select';
 
-export function UserAssignment({ users, usersRef, values, addNewUserRel, removeUserRel, setUserAmount, disabled, mainAmount, namePrefix='' }) {
+export function AccountUsersRelation({ users, usersRef, values, addNewUserRel, removeUserRel, setUserPercentage, disabled }) {
     const [state, setState] = useState({
         newUserRel: {}
     });
 
     const columns = [
         { prop: 'user', title: 'User', width: 200 },
-        { prop: 'amount', title: 'Amount', width: 150 },
+        { prop: 'percentage', title: 'Percentage', width: 150 },
         { prop: 'controls', title: '', width: 40 },
     ];
 
-    const showControls = !disabled && state.newUserRel.user && state.newUserRel.amount && parseFloat(state.newUserRel.amount);
+    const showControls = !disabled && state.newUserRel.user && state.newUserRel.percentage && parseFloat(state.newUserRel.percentage);
 
-    const valuesRows = values.other_users.map((ur, index) => {
+    const valuesRows = values.users_relation.map((ur, index) => {
         return {
             user: usersRef[ur.user].full_name,
-            amount: <Input value={ur.amount || ''}
-                name={`${namePrefix}new-user-rel-user-${index}-amount`}
+            percentage: <Input value={ur.percentage || ''}
+                name={`new-user-rel-user-${index}-percentage`}
                 style={{ textAlign: 'right' }}
                 disabled={disabled}
-                onChange={e => setUserAmount(e.target.value ? e.target.value : null, index)}
+                onChange={e => setUserPercentage(e.target.value ? e.target.value : null, index)}
             />,
             controls: !disabled ? <Icon size="smaller" name="remove" className="ui-icon__control" onClick={() => removeUserRel(index)} /> : '',
         };
@@ -35,25 +34,29 @@ export function UserAssignment({ users, usersRef, values, addNewUserRel, removeU
     const entries = [
         {
             user: <select value={state.newUserRel.user || ''}
-                name={`${namePrefix}new-user-rel-user`}
+                name={`new-user-rel-user`}
                 className="ui-form-v__select"
                 disabled={disabled}
                 onChange={e => setState({ ...state, newUserRel: { ...state.newUserRel, user: e.target.value ? +e.target.value : null }})}
             >
-                <option value={null}>No split</option>
-                {users.map(user => {
-                    return <option value={user.id} key={user.id}>{user.full_name}</option>;
-                })}
+                <option value={null}>Select...</option>
+                {users
+                    .filter(user => !values.users_relation
+                    .map(ur => ur.user).includes(user.id))
+                    .map(user => {
+                        return <option value={user.id} key={user.id}>{user.full_name}</option>;
+                    })
+                }
             </select>,
-            amount: <Input value={state.newUserRel.amount || ''}
+            percentage: <Input value={state.newUserRel.percentage || ''}
                 style={{ textAlign: 'right' }}
-                name={`${namePrefix}new-user-rel-amount`}
+                name={`new-user-rel-percentage`}
                 disabled={disabled}
-                onChange={e => setState({ ...state, newUserRel: { ...state.newUserRel, amount: e.target.value ? e.target.value : null }})}
+                onChange={e => setState({ ...state, newUserRel: { ...state.newUserRel, percentage: e.target.value ? e.target.value : null }})}
             />,
             controls: showControls ?
                 <Icon name="add" size="smaller" className="ui-icon__control"
-                    data-control={`${namePrefix}new-user-rel-add`}
+                    data-control={`new-user-rel-add`}
                     onClick={() => {
                         addNewUserRel(state.newUserRel);
                         setState({ ...state, newUserRel: {} });
@@ -62,9 +65,9 @@ export function UserAssignment({ users, usersRef, values, addNewUserRel, removeU
         },
         ...valuesRows,
         {
-            user: 'Master Total',
-            amount: <div style={{ textAlign: 'right', paddingRight: 5 }}>
-                {values.other_users.reduce((tot, u) => { return tot + parseFloat(u.amount || 0); }, parseFloat(mainAmount || 0))}
+            user: 'Total Percentage',
+            percentage: <div style={{ textAlign: 'right', paddingRight: 5 }}>
+                {values.users_relation.reduce((tot, u) => { return tot + parseFloat(u.percentage || 0); }, 0)}
             </div>
         }
     ];
@@ -72,18 +75,16 @@ export function UserAssignment({ users, usersRef, values, addNewUserRel, removeU
     return <Table columns={columns} entries={entries} config={{ borderType: 'none' }} />;
 }
 
-UserAssignment.propTypes = {
+AccountUsersRelation.propTypes = {
     users: PropTypes.array,
     usersRef: PropTypes.object,
     values: PropTypes.object,
     addNewUserRel: PropTypes.func,
     removeUserRel: PropTypes.func,
-    setUserAmount: PropTypes.func,
+    setUserPercentage: PropTypes.func,
     disabled: PropTypes.bool,
-    mainAmount: PropTypes.string,
-    namePrefix: PropTypes.string,
 };
 
-UserAssignment.defaultProps = {
+AccountUsersRelation.defaultProps = {
     disabled: false
 };

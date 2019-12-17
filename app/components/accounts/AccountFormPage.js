@@ -12,61 +12,61 @@ import { PageHeader } from 'components/ui/PageHeader';
 import { CodeHighlight } from 'components/style/CodeHighlight';
 import { getCurrentUser } from 'libs/authentication/utils';
 
-import { CATEGORIES_BREADCRUMBS, CATEGORIES_BASE_URL } from './constants';
-import { CategoryEntity, newCategory } from '../../models/category';
-import { CategoryForm } from './CategoryForm';
+import { ACCOUNTS_BREADCRUMBS, ACCOUNTS_BASE_URL } from './constants';
+import { AccountEntity, newAccount } from '../../models/account';
+import { AccountForm } from './AccountForm';
 
-export function CategoryPageForm() {
+export function AccountFormPage() {
     const finance = useSelector(state => state.finance);
     const history = useHistory();
     const { id: paramsId } = useParams();
     const loggedUser = getCurrentUser();
-    const { categories } = finance;
+    const { accounts } = finance;
 
-    const initialCategory = paramsId
-        ? categories[+paramsId] || newCategory()
-        : newCategory();
+    const initialAccount = paramsId
+        ? accounts[+paramsId] || newAccount()
+        : newAccount();
 
-    const [category, setCategory] = useState(initialCategory);
+    const [account, setAccount] = useState(initialAccount);
 
     return <Formik
         enableReinitialize={true}
-        initialValues={{ ...category }}
+        initialValues={{ ...account }}
         onSubmit={(values, { setSubmitting }) => {
-            const categoryObj = new CategoryEntity();
-            categoryObj.save(values).then(response => {
-                setCategory(response);
+            const accountObj = new AccountEntity();
+            accountObj.save(values).then(response => {
+                setAccount(response);
                 setSubmitting(false);
-                history.push(CATEGORIES_BASE_URL);
+                history.push(ACCOUNTS_BASE_URL);
             });
         }}
     >
         {props => {
             const { values, isSubmitting, handleSubmit, setSubmitting } = props;
 
-            const deleteCategory = () => {
-                const categoryObj = new CategoryEntity();
+            const deleteAccount = () => {
+                const accountObj = new AccountEntity();
                 setSubmitting(true);
-                categoryObj.delete(category.id).then(() => {
+                accountObj.delete(account.id).then(() => {
                     setSubmitting(false);
-                    history.push(CATEGORIES_BASE_URL);
+                    history.push(ACCOUNTS_BASE_URL);
                 });
             };
 
             const controls = <Controls
                 isSubmitting={isSubmitting}
-                deleteCategory={initialCategory.id ? deleteCategory : null}
+                deleteAccount={initialAccount.id ? deleteAccount : null}
             />;
             return <form onSubmit={handleSubmit}>
                 <Page>
                     <PageHeader controls={controls}>
-                        <Breadcrumbs breadcrumbs={CATEGORIES_BREADCRUMBS} />
-                        {category.id ? `Edit ${category.full_name}` : 'Add category'}
+                        <Breadcrumbs breadcrumbs={ACCOUNTS_BREADCRUMBS} />
+                        {account.id ? `Edit ${account.name}` : 'Add account'}
                     </PageHeader>
                 </Page>
                 <PageBody>
                     <div style={{ maxWidth: 600 }}>
-                        <CategoryForm {...props} category={category} />
+                        <AccountForm {...props} account={account} finance={finance} canEditUser={!account.id} />
                         {loggedUser.is_superuser && <CodeHighlight toggle={{ initial: false }}>
                             {JSON.stringify(values, null, 2)}
                         </CodeHighlight>}
@@ -77,27 +77,26 @@ export function CategoryPageForm() {
     </Formik>;
 }
 
-function Controls({ isSubmitting, deleteCategory }) {
+function Controls({ isSubmitting, deleteAccount }) {
     return <Fragment>
-        {deleteCategory &&
+        {deleteAccount &&
             <Button
-                disabled={!!isSubmitting} onClick={() => deleteCategory()}
-                classes={['negative', 'small']}
+                disabled={!!isSubmitting} onClick={() => deleteAccount()}
+                classes={['negative']}
             >Delete</Button>
         }
-        <Link
-            to={CATEGORIES_BASE_URL}
-            className="ui-button ui-button--small"
-        >Cancel</Link>
+        <Button tag={Link}
+            to={ACCOUNTS_BASE_URL}
+        >Cancel</Button>
         <Button
             disabled={!!isSubmitting} type="submit"
-            classes={['positive', 'small']}
+            classes={['positive']}
         >Save</Button>
     </Fragment>;
 }
 
 Controls.propTypes = {
     isSubmitting: PropTypes.bool,
-    deleteCategory: PropTypes.func,
+    deleteAccount: PropTypes.func,
 };
 

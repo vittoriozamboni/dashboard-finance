@@ -21,7 +21,7 @@ export class UserEntity extends BaseEntity {
             fetchActionSet: SET_USERS,
             ...options
         });
-    }    
+    }
 
     save () {
         throw new Error('User entity is read only');

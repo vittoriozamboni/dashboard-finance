@@ -9,13 +9,14 @@ import { SidePanel } from 'components/ui/SidePanel';
 import { Table } from 'components/ui/table/Table';
 
 import { ACCOUNTS_BASE_URL } from '../accounts/constants';
-import { CATEGORIES_BASE_URL } from '../categories/constants';
-import { MONEY_MOVEMENTS_BASE_URL } from '../moneyMovements/constants';
-import { MoneyMovementDetail } from './MoneyMovementDetail';
+import { TRANSACTIONS_BASE_URL } from './constants';
 import { Badge } from 'components/ui/Badge';
 
+import { getAttributesUIStyle } from '../utils';
+import { TransactionDetail } from './TransactionDetail';
 
-export function MoneyMovementsTable({ moneyMovements, finance }) {
+
+export function TransactionsTable({ transactions, finance }) {
 
     const numberStyle = { textAlign: 'right', paddingRight: '10px' };
     const columns = [
@@ -24,24 +25,19 @@ export function MoneyMovementsTable({ moneyMovements, finance }) {
         { prop: 'movement_icon', title: '', width: 30, padding: 0 },
         { prop: 'amount', title: 'Amount', width: 100, style: numberStyle },
         { prop: 'movement_date', title: 'Date', width: 120 },
-        { prop: 'category', title: 'Category', width: 200, },
-        { prop: 'master_total', title: 'Total', width: 100, style: numberStyle },
         { prop: 'description', title: 'Description' },
         { prop: 'tags', title: 'Tags', width: 200 },
         { prop: 'id', title: 'ID', width: 40 },
-        { prop: 'transaction', title: 'TR-ID', width: 70 },
     ];
 
-    const entries = moneyMovements
-        .sort((mm1, mm2) => mm1.movement_date > mm2.movement_date ? -1 : 1)
-        .map(mm => ({
-            ...mm,
-            account: mm.account && <ALink to={`${ACCOUNTS_BASE_URL}/${mm.account}`} classes={['borderless']}>
-                <Badge type="circular">{finance.accounts[mm.account].short_name}</Badge>
+    const entries = transactions
+        .sort((tr1, tr2) => tr1.movement_date > tr2.movement_date ? -1 : 1)
+        .map(tr => ({
+            ...tr,
+            account: tr.account && <ALink to={`${ACCOUNTS_BASE_URL}/${tr.account}`} classes={['borderless']}>
+                <Badge type="circular" style={getAttributesUIStyle(finance.accounts[tr.account])}>{finance.accounts[tr.account].short_name}</Badge>
             </ALink>,
-            category: <ALink to={`${CATEGORIES_BASE_URL}/${mm.category}`}>{finance.categories[mm.category].full_name}</ALink>,
-            movement_icon: mm.movement === '-' ? <Icon name="arrow_downward" className="red" size="small" /> : <Icon name="arrow_upward" className="teal" size="small" />,
-            master_total: parseFloat(mm.master_total) ? mm.master_total : '',
+            movement_icon: tr.movement === '-' ? <Icon name="arrow_downward" className="red" size="small" /> : <Icon name="arrow_upward" className="teal" size="small" />,
             actions: <Fragment>
                 <SidePanel
                     Trigger={({ setVisible, visible }) =>
@@ -49,19 +45,20 @@ export function MoneyMovementsTable({ moneyMovements, finance }) {
                     }
                     getSidePanelContentProps={({ setVisible }) => {
                         return {
-                            title: 'Money Movement Detail',
-                            content: <MoneyMovementDetail moneyMovement={mm} />,
+                            title: <h3 className="primary">Transaction Detail</h3>,
+                            content: <TransactionDetail transaction={tr} />,
                             footer: <Fragment>
                                 <div></div>
                                 <div>
-                                    <Button tag={Link} to={`${MONEY_MOVEMENTS_BASE_URL}/${mm.id}/edit`}>Edit</Button>
+                                    <Button tag={Link} to={`${TRANSACTIONS_BASE_URL}/${tr.id}/edit`}>Edit</Button>
                                     <Button
                                         classes={['primary']}
                                         style={{ marginLeft: '1rem' }}
                                         onClick={() => setVisible(false)}
                                     >Close</Button>
                                 </div>
-                            </Fragment>
+                            </Fragment>,
+                            width: window.innerWidth / 2,
                         };
                     }}
                 />
@@ -71,12 +68,14 @@ export function MoneyMovementsTable({ moneyMovements, finance }) {
     return <Table
         columns={columns}
         entries={entries}
-        config={{ pagination: true }}
+        config={{
+            pagination: true,
+        }}
     />;
 }
 
-MoneyMovementsTable.propTypes = {
-    moneyMovements: PropTypes.array,
+TransactionsTable.propTypes = {
+    transactions: PropTypes.array,
     finance: PropTypes.object.isRequired,
 };
 

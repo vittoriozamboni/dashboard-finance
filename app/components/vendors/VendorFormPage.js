@@ -12,61 +12,61 @@ import { PageHeader } from 'components/ui/PageHeader';
 import { CodeHighlight } from 'components/style/CodeHighlight';
 import { getCurrentUser } from 'libs/authentication/utils';
 
-import { CATEGORIES_BREADCRUMBS, CATEGORIES_BASE_URL } from './constants';
-import { CategoryEntity, newCategory } from '../../models/category';
-import { CategoryForm } from './CategoryForm';
+import { VENDORS_BREADCRUMBS, VENDORS_BASE_URL } from './constants';
+import { VendorEntity, newVendor } from '../../models/vendor';
+import { VendorForm } from './VendorForm';
 
-export function CategoryPageForm() {
+export function VendorFormPage() {
     const finance = useSelector(state => state.finance);
     const history = useHistory();
     const { id: paramsId } = useParams();
     const loggedUser = getCurrentUser();
-    const { categories } = finance;
+    const { vendors } = finance;
 
-    const initialCategory = paramsId
-        ? categories[+paramsId] || newCategory()
-        : newCategory();
+    const initialVendor = paramsId
+        ? vendors[+paramsId] || newVendor()
+        : newVendor();
 
-    const [category, setCategory] = useState(initialCategory);
+    const [vendor, setVendor] = useState(initialVendor);
 
     return <Formik
         enableReinitialize={true}
-        initialValues={{ ...category }}
+        initialValues={{ ...vendor }}
         onSubmit={(values, { setSubmitting }) => {
-            const categoryObj = new CategoryEntity();
-            categoryObj.save(values).then(response => {
-                setCategory(response);
+            const vendorObj = new VendorEntity();
+            vendorObj.save(values).then(response => {
+                setVendor(response);
                 setSubmitting(false);
-                history.push(CATEGORIES_BASE_URL);
+                history.push(VENDORS_BASE_URL);
             });
         }}
     >
         {props => {
             const { values, isSubmitting, handleSubmit, setSubmitting } = props;
 
-            const deleteCategory = () => {
-                const categoryObj = new CategoryEntity();
+            const deleteVendor = () => {
+                const vendorObj = new VendorEntity();
                 setSubmitting(true);
-                categoryObj.delete(category.id).then(() => {
+                vendorObj.delete(vendor.id).then(() => {
                     setSubmitting(false);
-                    history.push(CATEGORIES_BASE_URL);
+                    history.push(VENDORS_BASE_URL);
                 });
             };
 
             const controls = <Controls
                 isSubmitting={isSubmitting}
-                deleteCategory={initialCategory.id ? deleteCategory : null}
+                deleteVendor={initialVendor.id ? deleteVendor : null}
             />;
             return <form onSubmit={handleSubmit}>
                 <Page>
                     <PageHeader controls={controls}>
-                        <Breadcrumbs breadcrumbs={CATEGORIES_BREADCRUMBS} />
-                        {category.id ? `Edit ${category.full_name}` : 'Add category'}
+                        <Breadcrumbs breadcrumbs={VENDORS_BREADCRUMBS} />
+                        {vendor.id ? `Edit ${vendor.name}` : 'Add Vendor'}
                     </PageHeader>
                 </Page>
                 <PageBody>
                     <div style={{ maxWidth: 600 }}>
-                        <CategoryForm {...props} category={category} />
+                        <VendorForm {...props} vendor={vendor} finance={finance} />
                         {loggedUser.is_superuser && <CodeHighlight toggle={{ initial: false }}>
                             {JSON.stringify(values, null, 2)}
                         </CodeHighlight>}
@@ -77,27 +77,26 @@ export function CategoryPageForm() {
     </Formik>;
 }
 
-function Controls({ isSubmitting, deleteCategory }) {
+function Controls({ isSubmitting, deleteVendor }) {
     return <Fragment>
-        {deleteCategory &&
+        {deleteVendor &&
             <Button
-                disabled={!!isSubmitting} onClick={() => deleteCategory()}
-                classes={['negative', 'small']}
+                disabled={!!isSubmitting} onClick={() => deleteVendor()}
+                classes={['negative']}
             >Delete</Button>
         }
-        <Link
-            to={CATEGORIES_BASE_URL}
-            className="ui-button ui-button--small"
-        >Cancel</Link>
+        <Button tag={Link}
+            to={VENDORS_BASE_URL}
+        >Cancel</Button>
         <Button
             disabled={!!isSubmitting} type="submit"
-            classes={['positive', 'small']}
+            classes={['positive']}
         >Save</Button>
     </Fragment>;
 }
 
 Controls.propTypes = {
     isSubmitting: PropTypes.bool,
-    deleteCategory: PropTypes.func,
+    deleteVendor: PropTypes.func,
 };
 

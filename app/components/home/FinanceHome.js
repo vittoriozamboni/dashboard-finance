@@ -30,15 +30,30 @@ function FinanceHome({ history }) {
                 <ColumnBlock>
                     <h3>Actions</h3>
                     <BrowseCard
-                        title="Add Batch"
-                        description="Add a batch of Money Movements"
-                        onClick={() => history.push(`${FINANCE_BASE_URL}/money-movements/add/batch`)}
+                        title="Add Transaction"
+                        description="Add a single Transaction"
+                        onClick={() => history.push(`${FINANCE_BASE_URL}/transactions/add`)}
                         icon="import_export"
-                        width="50%"
+                        width="30%"
+                    />
+                    <BrowseCard
+                        title="Add Batch"
+                        description="Add a series of Transactions"
+                        onClick={() => history.push(`${FINANCE_BASE_URL}/transactions/add/batch`)}
+                        icon="import_export"
+                        width="30%"
                     />
                 </ColumnBlock>
                 <ColumnBlock>
                     <h3>Browse</h3>
+                    <BrowseCard
+                        title="Accounts"
+                        description="View all your Accounts"
+                        onClick={() => history.push(`${FINANCE_BASE_URL}/accounts`)}
+                        icon="account_circle"
+                        color="#199473"
+                        width="30%"
+                    />
                     <BrowseCard
                         title="Categories"
                         description="View all Categories"
@@ -60,6 +75,22 @@ function FinanceHome({ history }) {
                         description="View all Money Movements"
                         onClick={() => history.push(`${FINANCE_BASE_URL}/money-movements`)}
                         icon="import_export"
+                        color="#dcaf67"
+                        width="30%"
+                    />
+                    <BrowseCard
+                        title="Transactions"
+                        description="View Transactions"
+                        onClick={() => history.push(`${FINANCE_BASE_URL}/transactions`)}
+                        icon="import_export"
+                        color="#dcaf67"
+                        width="30%"
+                    />
+                    <BrowseCard
+                        title="Vendors"
+                        description="View Vendors"
+                        onClick={() => history.push(`${FINANCE_BASE_URL}/vendors`)}
+                        icon="people_alt"
                         color="#dcaf67"
                         width="30%"
                     />

@@ -1,26 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter, Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { Link, useParams } from 'react-router-dom';
+import * as am4core from '@amcharts/amcharts4/core';
+import * as am4charts from '@amcharts/amcharts4/charts';
 
+import { Breadcrumbs } from 'components/ui/Breadcrumbs';
 import { FullSectionLoader } from 'components/ui/Loader';
+import { Page } from 'components/ui/Page';
+import { PageBody } from 'components/ui/PageBody';
 import { PageHeader } from 'components/ui/PageHeader';
 
-import { FINANCE_BASE_URL } from '../../constants';
-import { withFinance } from '../../storeConnection';
+import { CONTEXTS_BREADCRUMBS, CONTEXTS_BASE_URL } from './constants';
 import { moneyMovementsEntity } from '../../models/moneyMovement';
 
-import { MoneyMovementsGrid } from '../moneyMovements/MoneyMovementsGrid';
-import { ContextCategoriesChart } from './ContextCharts';
+import { histogram } from '../../charts/histograms';
+import { MoneyMovementsTable } from '../moneyMovements/MoneyMovementsTable';
 
 
-function ContextDetail({ match, finance }) {
+export function ContextDetail() {
+    const finance = useSelector(state => state.finance);
+    const { id: paramsId } = useParams();
+
+    const pageBodyRef = useRef(null);
     const [moneyMovements, setMoneyMovements] = useState(null);
-    
-    const contextId = +match.params.id;
-    const context = finance.contexts[contextId];
+
+    const context = finance.contexts[+paramsId];
 
     useEffect(() => {
-        setMoneyMovements(moneyMovementsEntity.getByContext(contextId, Object.values(finance.moneyMovements)));
+        setMoneyMovements(moneyMovementsEntity.getByContext(context.id, Object.values(finance.moneyMovements)));
     }, []); // eslint-disable-line
 
     if (moneyMovements === null) {
@@ -28,32 +36,42 @@ function ContextDetail({ match, finance }) {
     }
 
     const controls = <Link
-        to={`${FINANCE_BASE_URL}/contexts/${context.id}/edit`}
-        className="ui-button ui-button--primary"
-    >Edit</Link>;    
+        to={`${CONTEXTS_BASE_URL}/${context.id}/edit`}
+        className="ui-button ui-button--primary ui-button--small"
+    >Edit</Link>;
 
-    return <div>
-        <PageHeader controls={controls}>
-            <Link to={`${FINANCE_BASE_URL}`}
-                className={`ui-page-header ui-page-header__breadcrumb`}
-            >Finance</Link>
-            <Link to={`${FINANCE_BASE_URL}/contexts`}
-                className={`ui-page-header ui-page-header__breadcrumb`}
-            >Contexts</Link>
+    return <Page>
+        <PageHeader controls={controls} scrollRef={pageBodyRef}>
+            <Breadcrumbs breadcrumbs={CONTEXTS_BREADCRUMBS} />
             {context.name}
         </PageHeader>
-        <div className="ui-page-body">
+        <PageBody fullHeight={true} withPageHeader={true} pageBodyRef={pageBodyRef}>
             <ContextCategoriesChart context={context} moneyMovements={moneyMovements} categories={finance.categories} chartStyle={{ marginBottom: '1rem' }} />
-            <MoneyMovementsGrid moneyMovements={moneyMovements} />
-        </div>
-    </div>;
+            <MoneyMovementsTable finance={finance} moneyMovements={moneyMovements} />
+        </PageBody>
+    </Page>;
 
 }
 
-ContextDetail.propTypes = {
-    match: PropTypes.object,
-    finance: PropTypes.object,
-};
 
-const connectedContextDetail = withRouter(withFinance(ContextDetail));
-export { connectedContextDetail as ContextDetail };
+function ContextCategoriesChart({ categories, moneyMovements })  {
+    const contextChartContainerId = 'finance-context-chart-container';
+
+    const groups = {};
+    for (let mm of moneyMovements) {
+        const group = categories[mm.category].parent || mm.category;
+        if (!groups[group]) groups[group] = { amount: 0, category: categories[group].name };
+        groups[group].amount += parseFloat(mm.amount);
+    };
+    const data = Object.values(groups);
+
+    useEffect(() => {
+        const chart = am4core.create(contextChartContainerId, am4charts.XYChart);
+        const { series } = histogram(chart, data, 'category', 'amount');
+        series.name = 'Categories';
+    }, [data]);
+
+    return <div id={contextChartContainerId} style={{ width: '100%', height: '300px' }}>
+        <FullSectionLoader />
+    </div>;
+}

@@ -97,8 +97,7 @@ export function TransactionFormPage() {
                         categoriesUpdate.push(categoriesEntity.get(values.category));
                     }
                     Promise.all(categoriesUpdate).then(() => {
-                        //history.push(TRANSACTIONS_BASE_URL);
-                        history.push(`${TRANSACTIONS_BASE_URL}/add`);
+                        history.push(TRANSACTIONS_BASE_URL);
                     });
                 });
             }).catch(() => {

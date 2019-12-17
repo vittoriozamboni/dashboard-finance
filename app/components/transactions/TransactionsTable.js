@@ -12,6 +12,8 @@ import { ACCOUNTS_BASE_URL } from '../accounts/constants';
 import { TRANSACTIONS_BASE_URL } from './constants';
 import { Badge } from 'components/ui/Badge';
 
+import { TransactionDetail } from './TransactionDetail';
+
 
 export function TransactionsTable({ transactions, finance }) {
 
@@ -43,7 +45,7 @@ export function TransactionsTable({ transactions, finance }) {
                     getSidePanelContentProps={({ setVisible }) => {
                         return {
                             title: 'Transaction Detail',
-                            content: 'Details will be here',
+                            content: <TransactionDetail transaction={tr} />,
                             footer: <Fragment>
                                 <div></div>
                                 <div>
@@ -54,7 +56,8 @@ export function TransactionsTable({ transactions, finance }) {
                                         onClick={() => setVisible(false)}
                                     >Close</Button>
                                 </div>
-                            </Fragment>
+                            </Fragment>,
+                            width: window.innerWidth / 2,
                         };
                     }}
                 />
@@ -64,6 +67,9 @@ export function TransactionsTable({ transactions, finance }) {
     return <Table
         columns={columns}
         entries={entries}
+        config={{
+            pagination: true,
+        }}
     />;
 }
 

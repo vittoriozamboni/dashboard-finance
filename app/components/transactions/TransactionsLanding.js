@@ -5,16 +5,17 @@ import { TRANSACTIONS_BASE_URL } from './constants';
 
 import { Transactions } from './Transactions';
 import { TransactionFormPage } from './TransactionFormPage';
-// import { AccountDetail } from './AccountDetail';
+import { TransactionAddBatchFormPage } from './TransactionAddBatchFormPage';
+import { TransactionDetailPage } from './TransactionDetailPage';
+
 
 function TransactionsLanding() {
     return <Switch>
         <Route exact path={`${TRANSACTIONS_BASE_URL}`} component={Transactions} />
         <Route exact path={`${TRANSACTIONS_BASE_URL}/add`} component={TransactionFormPage} />
+        <Route exact path={`${TRANSACTIONS_BASE_URL}/add/batch`} component={TransactionAddBatchFormPage} />
         <Route exact path={`${TRANSACTIONS_BASE_URL}/:id/edit`} component={TransactionFormPage} />
-        {/*}
-        <Route exact path={`${TRANSACTIONS_BASE_URL}/:id`} component={AccountDetail} />
-        */}
+        <Route exact path={`${TRANSACTIONS_BASE_URL}/:id`} component={TransactionDetailPage} />
     </Switch>;
 }
 

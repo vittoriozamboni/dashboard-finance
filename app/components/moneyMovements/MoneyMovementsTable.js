@@ -71,6 +71,7 @@ export function MoneyMovementsTable({ moneyMovements, finance }) {
     return <Table
         columns={columns}
         entries={entries}
+        config={{ pagination: true }}
     />;
 }
 

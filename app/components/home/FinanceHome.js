@@ -30,11 +30,18 @@ function FinanceHome({ history }) {
                 <ColumnBlock>
                     <h3>Actions</h3>
                     <BrowseCard
-                        title="Add Batch"
-                        description="Add a batch of Money Movements"
-                        onClick={() => history.push(`${FINANCE_BASE_URL}/money-movements/add/batch`)}
+                        title="Add Transaction"
+                        description="Add a single Transaction"
+                        onClick={() => history.push(`${FINANCE_BASE_URL}/transactions/add`)}
                         icon="import_export"
-                        width="50%"
+                        width="30%"
+                    />
+                    <BrowseCard
+                        title="Add Batch"
+                        description="Add a series of Transactions"
+                        onClick={() => history.push(`${FINANCE_BASE_URL}/transactions/add/batch`)}
+                        icon="import_export"
+                        width="30%"
                     />
                 </ColumnBlock>
                 <ColumnBlock>

@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { ALink } from 'components/ui/ALink';
+import { Badge } from 'components/ui/Badge';
 import { Breadcrumbs } from 'components/ui/Breadcrumbs';
 import { Button } from 'components/ui/Button';
 import { PageBody } from 'components/ui/PageBody';
@@ -11,6 +12,7 @@ import { PageHeader } from 'components/ui/PageHeader';
 import { Table } from 'components/ui/table/Table';
 
 import { FINANCE_BREADCRUMBS } from '../../constants';
+import { getAttributesUIStyle } from '../utils';
 import { ACCOUNTS_BASE_URL } from './constants';
 
 
@@ -53,6 +55,7 @@ function AccountsList({ accounts, users }) {
     const entries = Object.values(accounts).map(account => ({
         ...account,
         name: <ALink to={`${ACCOUNTS_BASE_URL}/${account.id}`}>{account.name}</ALink>,
+        short_name: <Badge type="circular" style={getAttributesUIStyle(account)}>{account.short_name}</Badge>,
         users: account.users_relation.map(
             ur => `${users[ur.user].full_name} - ${ur.percentage}%`).join(', '),
     }))

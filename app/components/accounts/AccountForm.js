@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { CompactPicker } from 'react-color';
 
 import { Form, Field, Input } from 'components/ui/form';
 import { AccountUsersRelation } from './forms/AccountUsersRelation';
@@ -39,6 +40,18 @@ export function AccountForm({ values, setFieldValue, handleBlur, finance, canEdi
             <Input id="short-name" value={values.short_name}
                 onChange={e => setFieldValue('short_name', e.target.value)}
                 onBlur={handleBlur}
+            />
+        </Field>
+        <Field label="Color">
+            <CompactPicker id="account-color"
+                color={values.attributes_ui.color}
+                onChangeComplete={color => setFieldValue('attributes_ui.color', color.hex)}
+            />
+        </Field>
+        <Field label="Text Color">
+            <CompactPicker id="account-text-color"
+                color={values.attributes_ui.text_color}
+                onChangeComplete={color => setFieldValue('attributes_ui.text_color', color.hex)}
             />
         </Field>
         <Field label="Users">

@@ -12,6 +12,7 @@ import { ACCOUNTS_BASE_URL } from '../accounts/constants';
 import { TRANSACTIONS_BASE_URL } from './constants';
 import { Badge } from 'components/ui/Badge';
 
+import { getAttributesUIStyle } from '../utils';
 import { TransactionDetail } from './TransactionDetail';
 
 
@@ -34,7 +35,7 @@ export function TransactionsTable({ transactions, finance }) {
         .map(tr => ({
             ...tr,
             account: tr.account && <ALink to={`${ACCOUNTS_BASE_URL}/${tr.account}`} classes={['borderless']}>
-                <Badge type="circular">{finance.accounts[tr.account].short_name}</Badge>
+                <Badge type="circular" style={getAttributesUIStyle(finance.accounts[tr.account])}>{finance.accounts[tr.account].short_name}</Badge>
             </ALink>,
             movement_icon: tr.movement === '-' ? <Icon name="arrow_downward" className="red" size="small" /> : <Icon name="arrow_upward" className="teal" size="small" />,
             actions: <Fragment>

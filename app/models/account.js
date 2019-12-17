@@ -9,6 +9,10 @@ export function newAccount() {
         name: '',
         short_name: '',
         users_relation: [],
+        attributes_ui: {
+            color: '',
+            text_color: '',
+        },
     };
 }
 

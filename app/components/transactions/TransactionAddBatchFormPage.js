@@ -94,7 +94,6 @@ export function TransactionAddBatchFormPage() {
                 postRequest(`finance/api/category/calculate-totals/`, {}).then(resp => {
                     categoriesEntity.fetch().then(() => {
                         const savedEntries = Object.values(saved).filter(s => s).length;
-                        debugger;
                         if (formState.values.length === validTransactions.length || savedEntries === formState.values.length) {
                             notify.success('All transactions have been added successfully.');
                             setFormState({ values: getInitialValues(finance, loggedUser), saved: {}, saving: {}});

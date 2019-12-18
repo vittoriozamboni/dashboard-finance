@@ -21,13 +21,12 @@ export function MoneyMovementsTable({ moneyMovements, finance }) {
     const numberStyle = { textAlign: 'right', paddingRight: '10px' };
     const columns = [
         { prop: 'actions', title: '', width: 50, padding: 0 },
-        { prop: 'account', title: '', width: 50, padding: 0 },
+        { prop: 'user', title: '', width: 50, padding: 0 },
         { prop: 'movement_icon', title: '', width: 30, padding: 0 },
         { prop: 'amount', title: 'Amount', width: 100, style: numberStyle },
         { prop: 'movement_date', title: 'Date', width: 120 },
         { prop: 'category', title: 'Category', width: 200, },
-        { prop: 'description', title: 'Description' },
-        { prop: 'tags', title: 'Tags', width: 200 },
+        { prop: 'tags', title: 'Tags' },
         { prop: 'id', title: 'ID', width: 40 },
         { prop: 'transaction', title: 'TR-ID', width: 70 },
     ];

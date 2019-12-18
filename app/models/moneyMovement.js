@@ -9,13 +9,10 @@ export function newMoneyMovement() {
         amount: 0,
         movement: '-',
         description: '',
-        tags: [],
         movement_date: null,
-        context: null,
         category: null,
+        context: null,
         user: null,
-        other_users: [],
-        one_time: false,
         vendor: null,
     };
 }
@@ -43,10 +40,6 @@ export class MoneyMovementEntity extends BaseEntity {
     save (entry) {
         const saveEntry = { ...entry };
         saveEntry.amount = parseFloat(saveEntry.amount);
-        saveEntry.other_users = [...entry.other_users].map(ou => {
-            ou.amount = parseFloat(ou.amount);
-            return ou;
-        });
         return super.save(saveEntry, { autoGet: true, actionSingleSet: SET_MONEY_MOVEMENT });
     }
 

@@ -1,7 +1,7 @@
 import BaseEntity from "models/common/base";
 
 import { SET_TAGS, SET_TAG, DELETE_TAG } from '../actions';
-export const BASE_URL = 'finance/api/money-movement-tags/';
+export const BASE_URL = 'finance/api/transaction-tags/';
 
 export function newTag() {
     return {
@@ -14,7 +14,7 @@ export function newTag() {
 
 export class TagEntity extends BaseEntity {
     constructor (properties) {
-        super('FinanceMoneyMovementTag', {
+        super('FinanceTransactionTag', {
             baseUrl: BASE_URL,
             hasPagination: false,
             ...properties
@@ -30,7 +30,7 @@ export class TagEntity extends BaseEntity {
             fetchActionSet: SET_TAGS,
             ...options
         });
-    }    
+    }
 
     save (entry) {
         return super.save(entry, { autoGet: true, actionSingleSet: SET_TAG });

@@ -90,7 +90,7 @@ export function TransactionFormPage() {
                 postRequest(`finance/api/category/calculate-totals/`, {}).then(resp => {
                     const categoriesUpdate = [];
                     if (values.categories && values.categories.length > 0) {
-                        for (categoryAmount of values.categories) {
+                        for (let categoryAmount of values.categories) {
                             categoriesUpdate.push(categoriesEntity.get(categoryAmount.category));
                         }
                     } else {

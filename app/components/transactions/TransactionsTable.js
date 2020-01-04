@@ -20,14 +20,14 @@ export function TransactionsTable({ transactions, finance }) {
 
     const numberStyle = { textAlign: 'right', paddingRight: '10px' };
     const columns = [
-        { prop: 'actions', title: '', width: 50, padding: 0 },
-        { prop: 'account', title: '', width: 50, padding: 0 },
-        { prop: 'movement_icon', title: '', width: 30, padding: 0 },
-        { prop: 'amount', title: 'Amount', width: 100, style: numberStyle },
+        { prop: 'actions', title: '', width: 50, padding: 0, search: { exclude: true } },
+        { prop: 'account', title: '', width: 50, padding: 0, search: { title: 'Account' } },
+        { prop: 'movement_icon', title: '', width: 30, padding: 0, search: { exclude: true } },
+        { prop: 'amount', title: 'Amount', width: 100, style: numberStyle, search: { type: 'number' } },
         { prop: 'movement_date', title: 'Date', width: 120 },
         { prop: 'description', title: 'Description' },
         { prop: 'tags', title: 'Tags', width: 200 },
-        { prop: 'id', title: 'ID', width: 40 },
+        { prop: 'id', title: 'ID', width: 50 },
     ];
 
     const entries = transactions

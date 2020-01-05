@@ -58,6 +58,7 @@ function AccountsList({ accounts, users }) {
         short_name: <Badge type="circular" style={getAttributesUIStyle(account)}>{account.short_name}</Badge>,
         users: account.users_relation.map(
             ur => `${users[ur.user].full_name} - ${ur.percentage}%`).join(', '),
+        _entry: account,
     }))
 
     const config = {

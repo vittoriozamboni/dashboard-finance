@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import CreatableSelect from 'react-select/creatable';
 
 import { getFormReactSelectStyles } from 'components/style/formReactSelect';
-import { Form, VField, Input, Textarea, Select, Toggle } from 'components/ui/form';
+import { Form, VField, DatePicker, Input, Textarea, Select, Toggle } from 'components/ui/form';
 import { ColumnBlock, RowBlock } from 'components/ui/Blocks';
 import { IconControl, Icon } from 'components/ui/Icon';
 
@@ -82,12 +82,14 @@ function TransactionForm({ values, finance, setFieldValue, handleBlur, errors, s
                         />
                     </VField>
                     <VField label="Movement Date" required={true} style={{ width: 150 }}>
-                        <Input id="transaction-movement-date" value={values.movement_date || ''}
+                        <DatePicker id="transaction-movement-date" value={values.movement_date || ''}
                             name="transaction-movement_date"
                             placeholder="YYYY-MM-DD"
                             invalid={submitCount && errors.movement_date}
-                            onChange={e => setFieldValue('movement_date', e.target.value)}
                             onBlur={handleBlur}
+                            onDayChangeString={dateString => setFieldValue('movement_date', dateString)}
+                            inputProps={{ style: { width: 150 } }}
+                            overlayWrapperProps={{ style: { marginLeft: -130 } }}
                         />
                     </VField>
                 </div>

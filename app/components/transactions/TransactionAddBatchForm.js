@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { getFormReactSelectStyles } from 'components/style/formReactSelect';
 import { Icon, IconControl } from 'components/ui/Icon';
-import { Form, HField, VField, Input, Select, Textarea } from 'components/ui/form';
+import { Form, HField, VField, Input, Select, Textarea, DatePicker } from 'components/ui/form';
 import { ColumnBlock, RowBlock } from 'components/ui/Blocks';
 
 import { withFinance } from '../../storeConnection';
@@ -87,13 +87,14 @@ function TransactionAddBatchForm({ values, setFieldValue, handleBlur, finance, a
                             />
                         </HField>
                         <HField style={{ maxWidth: 110 }}>
-                            <Input value={transactionValues.movement_date || ''}
+                            <DatePicker value={transactionValues.movement_date || ''}
                                 name={`tr-${batchIndex}-movement_date`}
                                 disabled={disableEntry}
                                 placeholder="YYYY-MM-DD"
-                                onChange={e => setFieldValue('movement_date', batchIndex, e.target.value)}
                                 onBlur={handleBlur}
-                            />
+                                onDayChangeString={dateString => setFieldValue('movement_date', batchIndex, dateString)}
+                                inputProps={{ style: { width: 110 } }}
+                                />
                         </HField>
                     </div>
                 </ColumnBlock>

@@ -128,7 +128,7 @@ export function TransactionFormPage() {
                         {transaction.id ? `Edit Transaction` : 'Add Transaction'}
                     </PageHeader>
                     <PageBody fullHeight={true} withPageHeader={true} pageBodyRef={pageBodyRef}>
-                        {submitCount && errors.amount_total &&
+                        {submitCount > 0 && errors.amount_total > 0 &&
                             <h2>{errors.amount_total}</h2>
                         }
                         <TransactionForm {...props} transaction={transaction} />

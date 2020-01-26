@@ -92,7 +92,7 @@ function TransactionAddBatchForm({ values, setFieldValue, handleBlur, finance, a
                                 disabled={disableEntry}
                                 placeholder="YYYY-MM-DD"
                                 onBlur={handleBlur}
-                                onDayChangeString={dateString => setFieldValue('movement_date', batchIndex, dateString)}
+                                onDayChange={dateString => setFieldValue('movement_date', batchIndex, dateString)}
                                 inputProps={{ style: { width: 110 } }}
                                 />
                         </HField>

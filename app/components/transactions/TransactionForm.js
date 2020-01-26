@@ -87,7 +87,7 @@ function TransactionForm({ values, finance, setFieldValue, handleBlur, errors, s
                             placeholder="YYYY-MM-DD"
                             invalid={submitCount && errors.movement_date}
                             onBlur={handleBlur}
-                            onDayChangeString={dateString => setFieldValue('movement_date', dateString)}
+                            onDayChange={dateString => setFieldValue('movement_date', dateString)}
                             inputProps={{ style: { width: 150 } }}
                             overlayWrapperProps={{ style: { marginLeft: -130 } }}
                         />

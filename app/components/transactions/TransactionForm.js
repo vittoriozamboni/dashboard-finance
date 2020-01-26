@@ -143,7 +143,22 @@ function TransactionForm({ values, finance, setFieldValue, handleBlur, errors, s
                                         />
                                     </VField>
                                     <span style={{ width: 40, textAlign: 'center' }}>
-                                        {state.newCategoryAmount && state.newCategoryId &&
+                                        {!!(!state.newCategoryAmount && categoriesSum && parseFloat(values.amount)) &&
+                                            <IconControl name="offline_bolt"
+                                                onClick={() => {
+                                                    setState({ ...state, newCategoryAmount: '' + (parseFloat(values.amount) - categoriesSum).toFixed(2) });
+                                                }}
+                                            />
+                                        }
+                                        {state.newCategoryAmount && state.newCategoryAmount.indexOf('+') >= 0 &&
+                                            <IconControl name="playlist_add"
+                                                onClick={() => {
+                                                    setState({ ...state, newCategoryAmount: '' +
+                                                        state.newCategoryAmount.split('+').map(n => parseFloat(n)).reduce((t, v) => t + v, 0) });
+                                                }}
+                                            />
+                                        }
+                                        {state.newCategoryAmount && state.newCategoryId && state.newCategoryAmount.indexOf('+') === -1 &&
                                             <IconControl name="add"
                                                 onClick={() => {
                                                     addNewCategory();
@@ -198,6 +213,7 @@ function TransactionForm({ values, finance, setFieldValue, handleBlur, errors, s
                         name="transaction-description"
                         onChange={e => setFieldValue('description', e.target.value)}
                         onBlur={handleBlur}
+                        style={{ minHeight: 81 }}
                     />
                 </VField>
             </ColumnBlock>

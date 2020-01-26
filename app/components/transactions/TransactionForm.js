@@ -48,7 +48,7 @@ function TransactionForm({ values, finance, setFieldValue, handleBlur, errors, s
     }
 
     const deleteCategory = (index) => {
-        setFieldValue('categories', values.categories.filter(_, i => i !== index));
+        setFieldValue('categories', values.categories.filter((_, i) => i !== index));
     }
 
     const categoriesSum = values.categories && values.categories.reduce((tot, c) => tot + c.amount, 0);

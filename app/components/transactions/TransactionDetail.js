@@ -19,7 +19,7 @@ export function TransactionDetail({ transaction }) {
     const account = transaction.account && finance.accounts[transaction.account];
     const vendor = transaction.vendor && finance.vendors[transaction.vendor];
 
-    const mmColumns = [
+    let mmColumns = [
         { prop: 'category_icon', title: '', width: 50 },
         { prop: 'category', title: 'Category' },
         { prop: 'amount', title: 'Amount', width: 60, style: { textAlign: 'right', paddingRight: '10px' } },
@@ -29,11 +29,14 @@ export function TransactionDetail({ transaction }) {
         const category = finance.categories[mm.category];
         return {
             ...mm,
-            category_icon: category.attributes_ui.icon && <Icon name={category.attributes_ui.icon} size="small" />,
+            category_icon: category.attributes_ui.icon ? <Icon name={category.attributes_ui.icon} size="small" /> : null,
             category: category.full_name,
         };
     });
-    const mmConfig = { zebra: true, borderType: 'none', hideHeader: true, statusBarController: { visible: false } };
+    if (!mmEntries.some(e => e.category_icon !== null)) {
+        mmColumns = mmColumns.slice(1);
+    }
+    const mmConfig = { zebra: true, borderType: 'none', hideHeader: true, statusBarController: { visible: false }, searchBar: false };
 
     return <Form style={{ overflowX: 'hidden' }}>
         <RowBlock>

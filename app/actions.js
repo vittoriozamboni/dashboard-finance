@@ -70,3 +70,6 @@ export const DELETE_VENDOR = 'DELETE_VENDOR';
 // Set the default period of time for the money movements to be used
 // in graphs
 export const SET_SELECTED_PERIOD = 'SET_SELECTED_PERIOD';
+
+// Used to check if the application is reloading the entities in a batch
+export const SET_IS_RELOADING_ENTITIES = 'FINANCE_SET_IS_RELOADING_ENTITIES';

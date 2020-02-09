@@ -13,6 +13,7 @@ const INITIAL_STATE = {
     categories: {},
     contexts: {},
     categoriesTree: [],
+    isReloadingEntities: false,
     subCategoriesTree: {},
     moneyMovements: {},
     tags: {},
@@ -140,6 +141,9 @@ const finance = (currentState, action) => {
             const newState = { ...state, selectedPeriod: action.selectedPeriod };
             saveState(newState);
             return newState;
+
+        case actions.SET_IS_RELOADING_ENTITIES:
+            return { ...state, isReloadingEntities: action.loading };
 
         default:
             return state;

@@ -44,6 +44,7 @@ export function TransactionsTable({ transactions, finance }) {
                         <Icon name="my_library_books" modifiers="clickable" size="small" onClick={() => setVisible(!visible)} />
                     }
                     getSidePanelContentProps={({ setVisible }) => {
+                        console.log(window.innerWidth);
                         return {
                             title: <h3 className="primary">Transaction Detail</h3>,
                             content: <TransactionDetail transaction={tr} />,
@@ -58,7 +59,7 @@ export function TransactionsTable({ transactions, finance }) {
                                     >Close</Button>
                                 </div>
                             </Fragment>,
-                            width: window.innerWidth / 2,
+                            width: window.innerWidth < 800 ? window.innerWidth - 50 : window.innerWidth / 2,
                         };
                     }}
                 />

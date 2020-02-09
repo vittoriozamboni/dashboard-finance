@@ -14,6 +14,7 @@ import { Badge } from 'components/ui/Badge';
 
 import { getAttributesUIStyle } from '../utils';
 import { TransactionDetail } from './TransactionDetail';
+import { VENDORS_BASE_URL } from '../vendors/constants';
 
 
 export function TransactionsTable({ transactions, finance }) {
@@ -25,6 +26,7 @@ export function TransactionsTable({ transactions, finance }) {
         { prop: 'movement_icon', title: '', width: 30, padding: 0, search: { exclude: true } },
         { prop: 'amount', title: 'Amount', width: 100, style: numberStyle, search: { type: 'number' } },
         { prop: 'movement_date', title: 'Date', width: 120 },
+        { prop: 'vendor', title: 'Vendor', width: 170 },
         { prop: 'description', title: 'Description' },
         { prop: 'tags', title: 'Tags', width: 200 },
         { prop: 'id', title: 'ID', width: 50 },
@@ -36,6 +38,9 @@ export function TransactionsTable({ transactions, finance }) {
             ...tr,
             account: tr.account && <ALink to={`${ACCOUNTS_BASE_URL}/${tr.account}`} classes={['borderless']}>
                 <Badge type="circular" style={getAttributesUIStyle(finance.accounts[tr.account])}>{finance.accounts[tr.account].short_name}</Badge>
+            </ALink>,
+            vendor: tr.vendor && <ALink to={`${VENDORS_BASE_URL}/${tr.vendor}`} classes={['borderless']}>
+                {finance.vendors[tr.vendor].name}
             </ALink>,
             movement_icon: tr.movement === '-' ? <Icon name="arrow_downward" className="red" size="small" /> : <Icon name="arrow_upward" className="teal" size="small" />,
             actions: <Fragment>

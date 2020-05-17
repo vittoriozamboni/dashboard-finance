@@ -22,7 +22,7 @@ function getAccountLabel(finance, accId) {
 
 function TransactionForm({ values, finance, setFieldValue, handleBlur, errors, submitCount }) {
     const [state, setState] = useState({
-        multiple_categories: false,
+        multiple_categories: true,
         newCategoryId: null,
         newCategoryAmount: '',
     });

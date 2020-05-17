@@ -42,12 +42,8 @@ function getInitialValues(finance, loggedUser) {
         }));
 }
 
-export function TransactionAddBatchFormPage() {
-    const finance = useSelector(state => state.finance);
-    const loggedUser = getCurrentUser();
-    const pageBodyRef = useRef(null);
-
-    const initialState = {
+function getInitialState(finance, loggedUser) {
+    return {
         values: getInitialValues(finance, loggedUser),
         saving: {},
         saved: {},
@@ -56,19 +52,30 @@ export function TransactionAddBatchFormPage() {
             currencyConversion: null,
         }
     };
+}
 
-    const [formState, setFormState] = useState(initialState);
+export function TransactionAddBatchFormPage() {
+    const finance = useSelector(state => state.finance);
+    const loggedUser = getCurrentUser();
+    const pageBodyRef = useRef(null);
+
+    const [formState, setFormState] = useState(getInitialState(finance, loggedUser));
 
     return <Formik
         enableReinitialize={true}
         onSubmit={(values, { setSubmitting }) => {
             const saved = { ...formState.saved };
+            let newVendorAdded = false;
+
 
             const validTransactions = formState.values.map((transaction, index) => {
                 if (formState.saved[index]) return null;
 
-                if (transaction.movement_date && transaction.category && transaction.amount && transaction.account)
-                    return { transaction, index};
+                if (transaction.movement_date && transaction.category && transaction.amount && transaction.account) {
+                    newVendorAdded = typeof transaction.vendor === 'string' || newVendorAdded;
+
+                    return { transaction, index };
+                }
                 return null;
             }).filter(v => v);
 
@@ -81,6 +88,7 @@ export function TransactionAddBatchFormPage() {
                 if (formState.global.context) {
                     enrichedTransaction.context = formState.global.context;
                 }
+
                 setFormState(s => ({ ...s, saving: { ...s.saving, [index]: true }}));
                 transactionsEntity
                     .save(enrichedTransaction)
@@ -115,17 +123,25 @@ export function TransactionAddBatchFormPage() {
                 return getPromise(validTransactions, 0, resolve, reject);
             }).then(responses => {
                 postRequest(`finance/api/category/calculate-totals/`, {}).then(resp => {
-                    categoriesEntity.fetch().then(() => {
+                    const refreshData = [
+                        categoriesEntity.fetch(),
+                    ];
+                    if (newVendorAdded) {
+                        refreshData.push(vendorsEntity.fetch());
+                    }
+
+                    Promise.all(refreshData).then(() => {
                         const savedEntries = Object.values(saved).filter(s => s).length;
                         if (formState.values.length === validTransactions.length || savedEntries === formState.values.length) {
                             notify.success('All transactions have been added successfully.');
-                            setFormState({ values: getInitialValues(finance, loggedUser), saved: {}, saving: {}});
+                            setFormState(getInitialState(finance, loggedUser));
                         } else {
                             const addedTR = validTransactions.length;
                             notify.success(`${addedTR} Transaction${addedTR > 1 ? 's' : ''} added successfully.`);
                         }
+                    }).finally(() => {
                         setSubmitting(false);
-                    });
+                    })
                 });
             }).catch(error => {
                 notify.error('Something went wrong!');

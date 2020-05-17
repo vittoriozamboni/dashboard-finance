@@ -112,6 +112,7 @@ function TransactionAddBatchForm({ values, setFieldValue, handleBlur, finance, a
                         </HField>
                         <HField style={{ minWidth: 200, maxWidth: 250, marginRight: 10 }}>{/* Category */}
                             <Select
+                                creatable={true}
                                 name={`tr-${batchIndex}-vendor`}
                                 disabled={disableEntry}
                                 placeholder="Vendor"

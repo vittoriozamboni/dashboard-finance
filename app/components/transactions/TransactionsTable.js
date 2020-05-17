@@ -8,6 +8,7 @@ import { Icon } from 'components/ui/Icon';
 import { SidePanel } from 'components/ui/SidePanel';
 import { Table } from 'components/ui/table/Table';
 
+import { CATEGORIES_BASE_URL } from '../categories/constants';
 import { ACCOUNTS_BASE_URL } from '../accounts/constants';
 import { TRANSACTIONS_BASE_URL } from './constants';
 import { Badge } from 'components/ui/Badge';
@@ -28,6 +29,7 @@ export function TransactionsTable({ transactions, finance }) {
         { prop: 'movement_date', title: 'Date', width: 120 },
         { prop: 'vendor', title: 'Vendor', width: 170 },
         { prop: 'description', title: 'Description' },
+        { prop: 'categories', title: 'Categories', width: 200 },
         { prop: 'tags', title: 'Tags', width: 200 },
         { prop: 'id', title: 'ID', width: 50 },
     ];
@@ -43,6 +45,7 @@ export function TransactionsTable({ transactions, finance }) {
                 {finance.vendors[tr.vendor].name}
             </ALink>,
             movement_icon: tr.movement === '-' ? <Icon name="arrow_downward" className="red" size="small" /> : <Icon name="arrow_upward" className="teal" size="small" />,
+            categories: getTransactionCategories(finance, tr),
             actions: <Fragment>
                 <SidePanel
                     Trigger={({ setVisible, visible }) =>
@@ -85,3 +88,17 @@ TransactionsTable.propTypes = {
     finance: PropTypes.object.isRequired,
 };
 
+function getTransactionCategories(finance, transaction) {
+    const categories = transaction.money_movements.reduce((cats, mmId) => {
+        if (!finance.moneyMovements[mmId]) return cats;
+
+        const cat = finance.moneyMovements[mmId].category;
+        cats[cat] = finance.categories[cat];
+        return cats;
+    }, {});
+    return <>
+        {Object.values(categories).map(category => {
+            return <ALink to={`${CATEGORIES_BASE_URL}/${category.id}`} key={category.id}>{category.full_name}</ALink>;
+        })}
+    </>;
+}

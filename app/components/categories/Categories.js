@@ -2,8 +2,6 @@ import React, { Fragment, useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import * as am4core from '@amcharts/amcharts4/core';
-import * as am4charts from '@amcharts/amcharts4/charts';
 
 import { ALink } from 'components/ui/ALink';
 import { Breadcrumbs } from 'components/ui/Breadcrumbs';
@@ -12,13 +10,12 @@ import { PageBody } from 'components/ui/PageBody';
 import { PageHeader } from 'components/ui/PageHeader';
 import { Table } from 'components/ui/table/Table';
 
-import { FINANCE_BREADCRUMBS } from '../../constants';
+import { moneyMovementsByPeriod } from '../../data/moneyMovementsDataUtils';
+import { FINANCE_BREADCRUMBS, FINANCE_PERIODS } from '../../constants';
 import { withFinance } from '../../storeConnection';
 import { CATEGORIES_BASE_URL } from './constants';
-import { categoriesYearPie } from '../../charts/categoriesYearPie';
-import { FullSectionLoader } from 'components/ui/Loader';
 import { PeriodSelector } from '../shared/PeriodSelector';
-
+import { CategoriesPieChart } from './CategoriesPieChart';
 
 export function Categories() {
     const pageBodyRef = useRef(null);
@@ -107,19 +104,16 @@ CategoriesList.propTypes = {
 };
 
 function CategoriesGraph({ finance }) {
-    const pieChartContainerId = 'finance-categories-chart-container';
+    const previousMonths = FINANCE_PERIODS[finance.selectedPeriod].previousMonths;
+    const [moneyMovementsList, setMoneyMovementList] = useState(null);
 
     useEffect(() => {
-        const chart = categoriesYearPie(
-            am4core.create(pieChartContainerId, am4charts.PieChart),
-            { finance }
-        );
-        return () => { chart && chart.dispose(); };
-    }, [finance]);
+        const mmData = moneyMovementsByPeriod({ finance, moneyMovements: moneyMovementsList, previousMonths });
+        const mmList = Object.values(mmData).reduce((mmList, monthList) => [...mmList, ...monthList], []);
+        setMoneyMovementList(mmList);
+    }, [previousMonths]);
 
-    return <div id={pieChartContainerId} style={{ width: "100%", height: "400px" }}>
-        <FullSectionLoader />
-    </div>;
+    return <CategoriesPieChart finance={finance} moneyMovementsList={moneyMovementsList} />
 }
 
 CategoriesGraph.propTypes = {

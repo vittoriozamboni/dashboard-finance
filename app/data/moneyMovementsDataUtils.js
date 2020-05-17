@@ -46,7 +46,7 @@ export function moneyMovementsByPeriod({ finance, groupParent=true, excludeIncom
     const haveFilterMonths = Object.keys(filterMonths).length > 0;
 
     // Divide by months
-    const monthsData = Object.values(mms).reduce((months, mm) => {
+    const monthsData = (mms.reduce ? mms : Object.values(mms)).reduce((months, mm) => {
         const month = `${mm.movement_date.split('-')[0]}-${mm.movement_date.split('-')[1]}`;
         // Ignore if the month is not in the list
         if (haveFilterMonths && !filterMonths[month]) return months;

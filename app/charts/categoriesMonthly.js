@@ -1,7 +1,8 @@
 import { moneyMovementsByPeriod } from '../data/moneyMovementsDataUtils';
 import { timeHistogram } from './histograms';
+import { TRANSACTIONS_BASE_URL } from '../components/transactions/constants';
 
-export function categoriesMonthly(chart, { finance, previousMonths }) {
+export function categoriesMonthly(chart, { finance, previousMonths, history }) {
     const monthsData = moneyMovementsByPeriod({ finance, previousMonths });
     const monthlyBudget = Object.values(finance.categories).reduce((budget, category) => {
         const catBudgets = category.user_data.budgets;
@@ -17,7 +18,13 @@ export function categoriesMonthly(chart, { finance, previousMonths }) {
         }];
     }, []);
 
-    const { valueAxis } = timeHistogram(chart, data);
+    const { valueAxis, series } = timeHistogram(chart, data);
+
+    if (history)
+        series.columns.template.events.on('hit', function(ev) {
+            const month = ev.target.dataItem.dataContext.date.substr(0, 7);
+            history.push(`${TRANSACTIONS_BASE_URL}?month=${month}`)
+        }, this);
 
     // budget guides
     let axisRange = valueAxis.axisRanges.create();

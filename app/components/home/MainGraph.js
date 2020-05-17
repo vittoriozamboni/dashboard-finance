@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import{ useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
@@ -14,6 +15,7 @@ am4core.useTheme(am4themes_animated);
 
 
 export function MainGraph() {
+    const history = useHistory();
     const finance = useSelector(state => state.finance);
     const monthChartContainerId = 'finance-home-month-chart-container';
     const previousMonths = FINANCE_PERIODS[finance.selectedPeriod].previousMonths;
@@ -21,13 +23,15 @@ export function MainGraph() {
     useEffect(() => {
         const chart = categoriesMonthly(
             am4core.create(monthChartContainerId, am4charts.XYChart),
-            { finance, previousMonths  }
+            { finance, previousMonths, history  }
         );
         return () => { chart && chart.dispose(); };
     }, [finance, previousMonths]);
 
     return <div>
-        <div id={monthChartContainerId} style={{ width: "100%", height: "400px" }}><FullSectionLoader /></div>
+        <div id={monthChartContainerId} style={{ width: "100%", height: "400px" }}>
+            <FullSectionLoader />
+        </div>
     </div>;
 }
 

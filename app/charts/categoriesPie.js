@@ -2,17 +2,17 @@ import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 
 
-export function categoriesYearPie(chart, { finance }) {
+export function categoriesPie(chart, { finance, moneyMovementsList, excludeIncoming=true }) {
     const incoming = Object.values(finance.categories).filter(c => c.name === 'Incoming')[0];
-    const currentYear = '2018'; //`${new Date().getFullYear}`;
 
-    const categoriesData = Object.values(finance.moneyMovements).reduce((data, mm) => {
-        if (mm.movement_date.indexOf(currentYear) === 0 && mm.category !== incoming.id) {
-            if (!data[mm.category]) {
-                data[mm.category] = 0;
-            }
-            data[mm.category] += +mm.amount;
+    const categoriesData = moneyMovementsList.reduce((data, mm) => {
+        if (excludeIncoming && mm.category === incoming.id)
+            return data;
+
+        if (!data[mm.category]) {
+            data[mm.category] = 0;
         }
+        data[mm.category] += +mm.amount;
         return data;
     }, {});
 
